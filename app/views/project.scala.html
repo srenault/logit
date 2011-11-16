@@ -1,0 +1,21 @@
+@(project: models.Project)
+
+@main(":: LOGIT ::") {
+<h2>@project.name</h2>
+<table>
+   @project.logs.map{log =>
+      <tr>
+      @log.info.map { info =>
+         <td>@info._1</td>
+      }
+      </tr>
+      <tr>
+      @log.info.map { info =>
+         <td>@info._2</td>
+      }
+      </tr>
+      <br/>
+   }
+</table>
+}
+

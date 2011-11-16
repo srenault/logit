@@ -1,0 +1,22 @@
+package models
+
+import db.MongoDB
+
+case class Project(id: Long, name: String) {
+}
+
+object Project extends MongoDB {
+  val TABLE_NAME = "projects"
+
+  def create(project: Project) = {
+    val project = MongoDBObject("user" -> "litig")
+    insert(TABLE_NAME, project)
+  }
+  
+  def delete = {}
+  def findById: Option[Project] = {
+    select(TABLE_NAME)
+    None
+  }
+  def findByName: Option[Project] = None
+}

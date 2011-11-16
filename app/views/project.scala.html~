@@ -1,0 +1,9 @@
+@(projects: List[Project] = Nil)
+
+@main("LogIt") {
+  <ul>
+  @projects.map { project =>
+     <li><a href="#">@project.name</a></li>
+  }
+  </ul>
+}
