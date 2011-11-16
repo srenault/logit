@@ -13,7 +13,7 @@ object Application extends Controller {
     //println(Project.findByName("Logit").get.name)
     //val log = Log(project.name, Map[String, Any]( ( "message" -> "runtime exception"), ("thread" -> "#1")))
     //Log.create(log)
-    project.logs
+    //project.logs
     Ok(views.html.index(List(project)))
   }
 }

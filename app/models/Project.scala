@@ -8,6 +8,10 @@ case class Project(name: String) extends MongoDB {
     val query = MongoDBObject("project" -> name)
     select(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
+
+  def addLog(log: String) = {
+    Log.create(Log(name, log))
+  }
 }
 
 object Project extends MongoDB {
