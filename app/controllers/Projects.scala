@@ -1,14 +1,20 @@
 package controllers
 
+import play.Logger
 import play.api._
 import play.api.mvc._
 import play.api.data._
-import play.api.data.format._
-import play.api.data.validation._
 
 import models.Project
 
 object Projects extends Controller {
+
+  val logForm = Form(
+    of(
+      "name" -> text,
+      "log" -> text
+    ) 
+  )
   
   /* List all project */
   def index() = Action {
@@ -22,22 +28,15 @@ object Projects extends Controller {
     }.getOrElse(NotFound)
   }
 
-  /* Create a project if not exist */
-  def addLog(name: String) = Action {
-/*    val logForm = Form (
-      of(
-        "log" -> of[String]
-      )
-    )*/
-
-    //val log = logForm.bindFromRequest.get
-    val log =""
-    
+  /* Create a project if not exist (and add log entry) */
+  def addLog(name: String) = Action { implicit request =>
+    val logEntry = logForm.bindFromRequest.get
+    Logger.debug("Receive new log entry: " + logEntry)
     Project.findByName(name).map { project =>
-      project.addLog(log)
+      project.addLog(logEntry._2)
     }.getOrElse {
       val newProject = Project(name)
-      newProject.addLog(log)
+      newProject.addLog(logEntry._2)
     }
     Ok
   }
