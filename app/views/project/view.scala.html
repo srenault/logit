@@ -4,15 +4,15 @@
 <h2>@project.name</h2>
 <fieldset>
   <legend>Log entries</legend>
-<table>
-   @project.logs.map{log =>
+<table class="logs">
+   @project.logs.map{ log =>
       <tr>
-      @log.dataMap.filter(header => (header._1 != "_id")).map { data =>
+      @log.dataMap.map { data =>
          <td>@data._1</td>
       }
       </tr>
       <tr>
-      @log.dataMap.filter(header => (header._1 != "_id")).map { data =>
+      @log.dataMap.map { data =>
          <td>@data._2</td>
       }
       </tr>
@@ -20,4 +20,9 @@
    }
 </table>
 </fieldset>
+
+<script type="text/javascript">
+  var project = new Project("@project.name");
+  window.setTimeout(project.refresh, 2000);
+</script>
 }

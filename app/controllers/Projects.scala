@@ -3,6 +3,8 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.data._
+import play.api.data.format._
+import play.api.data.validation._
 
 import models.Project
 
@@ -22,13 +24,14 @@ object Projects extends Controller {
 
   /* Create a project if not exist */
   def addLog(name: String) = Action {
-    val logForm = Form(
+/*    val logForm = Form (
       of(
         "log" -> of[String]
       )
-    )
+    )*/
 
-    val log = logForm.bindFromRequest.get
+    //val log = logForm.bindFromRequest.get
+    val log =""
     
     Project.findByName(name).map { project =>
       project.addLog(log)
