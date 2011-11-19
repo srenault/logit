@@ -15,6 +15,10 @@ trait MongoDB {
     db(tableName) += model
   }
 
+  def selectAll(tableName: String) = {
+    db(tableName).find()
+  }
+
   def select(tableName: String, model: MongoDBObject) = {
     db(tableName).find(model)
   }

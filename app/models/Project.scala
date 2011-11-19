@@ -30,4 +30,10 @@ object Project extends MongoDB {
       Some(Project(result.getAs[String]("name").get))
     }.orElse(None)
   }
+
+  def list(): List[Project] = {
+    selectAll(TABLE_NAME).map { result =>
+      Project(result.getAs[String]("name").get)
+    }.toList
+  }
 }

@@ -1,0 +1,23 @@
+@(project: models.Project)
+
+@main(":: LOGIT ::") {
+<h2>@project.name</h2>
+<fieldset>
+  <legend>Log entries</legend>
+<table>
+   @project.logs.map{log =>
+      <tr>
+      @log.dataMap.filter(header => ((header._1 != "_id"))).map { data =>
+         <td>@data._1</td>
+      }
+      </tr>
+      <tr>
+      @log.dataMap.filter(header => ((header._1 != "_id") || (header._1 != "project"))).map { data =>
+         <td>@data._2</td>
+      }
+      </tr>
+      <br/>
+   }
+</table>
+</fieldset>
+}

@@ -3,13 +3,39 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-object Logs extends Controller {
+import models.Project
+
+object Projects extends Controller {
   
-  /**
-   * Create a log entry.
-   */
-  def create(event: String) = Action {
-    println(event)
-    Ok(event)
+  /* List all project */
+  def index() = Action {
+    Ok(views.html.project.index(Project.list()))
+  }
+
+  /* View one project */
+  def view(name: String) = Action {
+    Project.findByName(name).map { project => 
+      Ok(views.html.project.view(project))
+    }.getOrElse(NotFound)
+  }
+
+  /* Create a project if not exist */
+  def addLog(name: String, log: String) = Action {
+    Project.findByName(name).map { project =>
+      project.addLog(log)
+    }.getOrElse {
+      val newProject = Project(name)
+      newProject.addLog(log)
+    }
+    Ok
+  }
+
+  /* List all logs of one project */
+  def getLogs(name: String) = Action {
+    import sjson.json._
+    import DefaultProtocol._
+    import JsonSerialization._
+
+    Ok(tojson(Project(name).logs).toString)
   }
 }
