@@ -1,8 +1,9 @@
 .footer {
     border: solid 1px black;
-    background-color: grey;
+    background-color: #252C52;
+    padding-left: 18px;
 }
 
-.footer h2 {
-    color: green;
+.footer p {
+    color: white;
 }

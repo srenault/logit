@@ -9,16 +9,9 @@ import sjson.json._
 import DefaultProtocol._
 import JsonSerialization._
   
-import models.Project
+import models.{Project, Log}
 
 object Projects extends Controller {
-
-  val logForm = Form(
-    of(
-      "name" -> text,
-      "log" -> text
-    ) 
-  )
   
   /* List all project */
   def index() = Action {
@@ -36,17 +29,28 @@ object Projects extends Controller {
     }.getOrElse(NotFound)
   }
 
+  val logForm = Form(
+    of(
+      "name" -> text,
+      "log" -> text
+    ) 
+  )
+
   /* Create a project if not exist (and add log entry) */
   def addLog(name: String) = Action { implicit request =>
-    val logEntry = logForm.bindFromRequest.get
-    Logger.debug("Receive new log entry: " + logEntry)
-    Project.findByName(name).map { project =>
-      project.addLog(logEntry._2)
-    }.getOrElse {
-      val newProject = Project(name)
-      newProject.addLog(logEntry._2)
-    }
-    Ok
+    logForm.bindFromRequest.fold(
+      errors => BadRequest,
+      {
+        case (projectName, log) =>
+           Project.findByName(name).map { project =>
+             project.addLog(log)
+           }.getOrElse {
+             val newProject = Project(name)
+             Project.create(newProject)
+             newProject.addLog(log)
+           }
+        Ok
+      })
   }
 
   /* List all logs of one project */

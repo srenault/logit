@@ -1,5 +1,7 @@
 section.projects {
     border: solid 1px black;
+    background-color: #302B2B;
+    color: white;
 }
 
 section.projects ul {
@@ -8,9 +10,10 @@ section.projects ul {
 }
 
 section.projects li {
-    border: solid 1px black;
+    margin: 2px;
+    width: 200px;
 }
 
 section.projects li:hover {
-    background-color: maroon;
+    font-size: 1.4em;
 }

@@ -1,0 +1,20 @@
+nav {
+    height: 40px;
+ }
+
+nav ul {
+    color: white;
+    list-style: none;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 0;
+}
+
+nav li {
+    margin-left: 10px;
+    float: left;
+}
+
+nav li:hover {
+    color: grey;
+}

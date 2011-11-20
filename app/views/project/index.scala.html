@@ -1,18 +1,18 @@
 @(projects: List[Project] = Nil)
 
 @main(":: LOGIT ::") {
-<nav class="project">Home</nav>
+<nav class="project"><ul><li>{ HOME }</li></ul></nav>
 <section class="projects">
-  <fieldset>
+<fieldset>
   <legend>Projects</legend>
   <ul>
   @projects.map { project =>
      <li><a href="projects/@project.name">@project.name</a></li>
   }
   </ul>
-  </fieldset>
 </section>
+</fieldset>
 <script type="text/javascript">
-  window.setTimeout(refreshProjects(2000));
+  window.setInterval(refreshProjects,2000);
 </script>
 }

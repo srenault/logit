@@ -4,19 +4,21 @@ nav.project {
 }
 
 section.logs {
-    background-color: orange;
+    color: white;
+    background-color: #1E1B1B;
     border: solid 1px black;
 }
 
 section.logs table {
-    border: solid 1px black;
+    border: solid 1px grey;
 }
 
 section.logs th {
     border: solid 1px black;
-    background-color: red;
+    background-color: #951C1C;
 }
 
 section.logs td {
     border: solid 1px black;
+    background-color: grey;
 }

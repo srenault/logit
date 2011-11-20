@@ -1,7 +1,7 @@
 @(project: models.Project)
 
 @main(":: LOGIT ::") {
-<nav class="project"><a href="/">Home</a> -> @project.name</nav>
+<nav class="project"><ul><li><a href="/">HOME</a></li><li>{ @project.name }</li></ul></nav>
 <section class="logs">
 <fieldset>
   <legend>Log entries</legend>
@@ -17,12 +17,11 @@
          <td>@data._2</td>
       }
       </tr>
-      <br/>
    }
 </table>
 </fieldset>
 </section>
 <script type="text/javascript">
-  window.setTimeout(refreshProject("@project.name", 2000));
+  setInterval(refreshProject, 2000, "@project.name");
 </script>
 }
