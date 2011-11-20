@@ -1,0 +1,16 @@
+section.projects {
+    border: solid 1px black;
+}
+
+section.projects ul {
+    list-style: none;
+    width: 100px;
+}
+
+section.projects li {
+    border: solid 1px black;
+}
+
+section.projects li:hover {
+    background-color: maroon;
+}

@@ -3,7 +3,7 @@
 @main(":: LOGIT ::") {
   <ul>
   @projects.map { project =>
-     <li><a href="projects?name=@project.name">@project.name</a></li>
+     <li><a href="projects/@project.name">@project.name</a></li>
   }
   </ul>
 }

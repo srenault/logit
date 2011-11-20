@@ -1,0 +1,8 @@
+.header {
+    border: solid 1px black;
+    background-color: grey;
+}
+
+.header h2 {
+    color: green;
+}

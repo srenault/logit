@@ -5,18 +5,23 @@
 <html>
     <head>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logit.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/header.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/footer.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/project/projects.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/project/logs.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.6.4.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/project.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/projects.js")" type="text/javascript"></script>
     </head>
-    <hr/>
-    <h2>:: LOGIT ::</h2>
-    <hr/>
+    <header class="header">
+      <h2>[LOGIT]</h2>
+    </header>
     <body>
         @content
     </body>
-    <hr/>
-    <p><em>:: LOGIT :: - Listen yours applications !</em></p>
-    <hr/>
+    <footer class="footer">
+      <p><em>[LOGIT] - Listen yours applacations</em></p>
+    </footer>
 </html>

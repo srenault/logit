@@ -1,0 +1,8 @@
+.footer {
+    border: solid 1px black;
+    background-color: grey;
+}
+
+.footer h2 {
+    color: green;
+}

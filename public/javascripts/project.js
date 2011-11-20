@@ -1,12 +1,8 @@
-function Project(name) {
-    this.name = name;
-}
-
-Project.prototype.refresh = function() {
-    var url = "{name}/logs".replace("{name}", "NOWT!FY");
+refreshProject = function(name) {
+    var url = "{name}/logs".replace("{name}", name);
     $.ajax({
         url: url,
-        context: $('table.logs'),
+        context: $('section.logs table'),
         dataType: "json",
         success: function(logs) {
             var this_ = $(this);
@@ -15,7 +11,7 @@ Project.prototype.refresh = function() {
                 $(this_).append("<tr>");
                 for(var dataName in oneLog.data) {
                     if(oneLog.data.hasOwnProperty(dataName) && dataName !='_id' && dataName !='project') {
-                        $('fieldset tr').last().append("<td>"+ dataName + "</td>");
+                        $('fieldset tr').last().append("<th>"+ dataName + "</th>");
                     }
                 }
                 $(this_).append("</tr>");

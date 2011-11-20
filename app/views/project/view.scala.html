@@ -1,14 +1,15 @@
 @(project: models.Project)
 
 @main(":: LOGIT ::") {
-<h2>@project.name</h2>
+<nav class="project"><a href="/">Home</a> -> @project.name</nav>
+<section class="logs">
 <fieldset>
   <legend>Log entries</legend>
-<table class="logs">
+<table>
    @project.logs.map{ log =>
       <tr>
       @log.dataMap.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
-         <td>@data._1</td>
+         <th>@data._1</th>
       }
       </tr>
       <tr>
@@ -20,9 +21,8 @@
    }
 </table>
 </fieldset>
-
+</section>
 <script type="text/javascript">
-  var project = new Project("@project.name");
-  window.setTimeout(project.refresh, 2000);
+  window.setTimeout(refreshProject("@project.name", 2000));
 </script>
 }

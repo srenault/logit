@@ -1,6 +1,11 @@
 package models
 
 import com.mongodb.casbah.Imports._
+import sjson.json._
+import DefaultProtocol._
+import JsonSerialization._
+import dispatch.json._
+
 import db.MongoDB
 
 case class Project(name: String) extends MongoDB {
@@ -35,5 +40,16 @@ object Project extends MongoDB {
     selectAll(TABLE_NAME).map { result =>
       Project(result.getAs[String]("name").get)
     }.toList
+  }
+
+  implicit object ProjectFormat extends Format[Project] {
+    def reads(json: JsValue): Project = json match {
+	  case JsObject(m) => Project(fromjson[String](m(JsString("name"))))
+	  case _ => throw new RuntimeException("JsObject expected")
+    }
+
+    def writes(project: Project): JsValue = {
+      JsObject(List((tojson("name").asInstanceOf[JsString], tojson(project.name))))
+    }
   }
 }

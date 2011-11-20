@@ -5,6 +5,10 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 
+import sjson.json._
+import DefaultProtocol._
+import JsonSerialization._
+  
 import models.Project
 
 object Projects extends Controller {
@@ -19,6 +23,10 @@ object Projects extends Controller {
   /* List all project */
   def index() = Action {
     Ok(views.html.project.index(Project.list()))
+  }
+
+  def getProjects() = Action {
+    Ok(tojson(Project.list()).toString)
   }
 
   /* View one project */
@@ -42,11 +50,7 @@ object Projects extends Controller {
   }
 
   /* List all logs of one project */
-  def getLogs(name: String) = Action {
-    import sjson.json._
-    import DefaultProtocol._
-    import JsonSerialization._
-
+  def getLogs(name: String) = Action {    
     Ok(tojson(Project(name).logs).toString)
   }
 }
