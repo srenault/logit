@@ -9,14 +9,13 @@ import sjson.json._
 import DefaultProtocol._
 import JsonSerialization._
 import dispatch.json._
-//import play.libs.JSON._
 
 import db.MongoDB
 
 case class Log(projectName: String, data: String = "{}") extends MongoDB {
 
   lazy val dataMap: Map[String, Any] = JSON.parseFull(data) match {
-    case Some(data: Map[String, Any]) => data
+    case Some(data: Map[String, Any]) => data //.filter(header => (header._1 != "_id" && header._1 != "project"))
     case _ => Map[String, Any]()
   }
 }
@@ -52,6 +51,4 @@ object Log extends MongoDB {
       ))
     }
   }
-
-//  implicit val LogFormat: Format[Log] = asProduct2("projectName", "data")(Log.apply)(Log.unapply(_).get)
 }

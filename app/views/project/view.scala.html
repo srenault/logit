@@ -7,12 +7,12 @@
 <table class="logs">
    @project.logs.map{ log =>
       <tr>
-      @log.dataMap.map { data =>
+      @log.dataMap.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
          <td>@data._1</td>
       }
       </tr>
       <tr>
-      @log.dataMap.map { data =>
+      @log.dataMap.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
          <td>@data._2</td>
       }
       </tr>

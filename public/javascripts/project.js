@@ -14,15 +14,15 @@ Project.prototype.refresh = function() {
             logs.forEach(function(oneLog) {
                 $(this_).append("<tr>");
                 for(var dataName in oneLog.data) {
-                    if(oneLog.data.hasOwnProperty(dataName)) {
-                        $(this_).append("<td>"+ dataName + "</td>");
+                    if(oneLog.data.hasOwnProperty(dataName) && dataName !='_id' && dataName !='project') {
+                        $('fieldset tr').last().append("<td>"+ dataName + "</td>");
                     }
                 }
                 $(this_).append("</tr>");
                 $(this_).append("<tr>");
                 for(var dataName in oneLog.data) {
-                    if(oneLog.data.hasOwnProperty(dataName)) {
-                        $(this_).append("<td>"+ oneLog.data[dataName] + "</td>");
+                    if(oneLog.data.hasOwnProperty(dataName) && dataName !='_id' && dataName !='project') {
+                        $('fieldset tr').last().append("<td>"+ oneLog.data[dataName] + "</td>");
                     }
                 }
                 $(this_).append("</tr>");
