@@ -1,15 +1,13 @@
 package db
 
+import play.Logger
 import com.mongodb.casbah.Imports._
 
 trait MongoDB {
 
   val DB_NAME = "logIt"
   
-  lazy val db = {
-    val mongoConnection = MongoConnection()
-    mongoConnection(DB_NAME)
-  }
+  lazy val db = MongoConnection()(DB_NAME)
 
   def insert(tableName: String, model: MongoDBObject) = {
     db(tableName) += model

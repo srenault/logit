@@ -13,7 +13,7 @@ import db.MongoDB
 case class Project(name: String) extends MongoDB {
   def logs: List[Log] = {
     val query = MongoDBObject("project" -> name)
-    select(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
+    selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
 
   def addLog(log: String) = {
