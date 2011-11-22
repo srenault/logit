@@ -27,7 +27,7 @@ object Log extends MongoDB {
   def create(log: Log) = {
     val mongoLog = MongoDBObject.newBuilder
     
-    val logData = JSON.parseFull(log.data) match {
+    JSON.parseFull(log.data) match {
       case Some(data: Map[String, Any]) => {
         mongoLog ++= data 
         mongoLog +=  "project" -> log.projectName

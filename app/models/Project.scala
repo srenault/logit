@@ -1,5 +1,7 @@
 package models
 
+import play.Logger
+  
 import com.mongodb.casbah.Imports._
 import sjson.json._
 import DefaultProtocol._
@@ -15,6 +17,7 @@ case class Project(name: String) extends MongoDB {
   }
 
   def addLog(log: String) = {
+    Logger.debug("Creating log entry with " + log)
     Log.create(Log(name, log))
   }
 }
