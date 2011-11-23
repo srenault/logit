@@ -40,9 +40,13 @@ object Project extends MongoDB {
   }
 
   def list(): List[Project] = {
-    selectAll(TABLE_NAME).map { result =>
-      Project(result.getAs[String]("name").get)
-    }.toList
+    try {
+      selectAll(TABLE_NAME).map { result =>
+        Project(result.getAs[String]("name").get)
+      }.toList
+    } catch {
+      case e: Exception => Nil
+    }
   }
 
   implicit object ProjectFormat extends Format[Project] {

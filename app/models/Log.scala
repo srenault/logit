@@ -15,7 +15,7 @@ import db.MongoDB
 case class Log(projectName: String, data: String = "{}") extends MongoDB {
 
   lazy val dataMap: Map[String, Any] = JSON.parseFull(data) match {
-    case Some(data: Map[String, Any]) => data //.filter(header => (header._1 != "_id" && header._1 != "project"))
+    case Some(data: Map[String, Any]) => data 
     case _ => Map[String, Any]()
   }
 }
