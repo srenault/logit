@@ -15,6 +15,7 @@ The web app exposes to clients some REST web services to access to logs' project
 A Mongodb database is used to store all the logs.
 
 To configure the connection to the database, edit the xml file 'application.conf' :
+
     mongo.host=127.0.0.1
     mongo.port=27017
     mongo.db=logIt
