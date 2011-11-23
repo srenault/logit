@@ -25,7 +25,7 @@ refreshProject = function(name) {
             });
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert("Getting logs failed")
+            //alert("Getting logs failed")
         }
     });
 };

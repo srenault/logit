@@ -1,0 +1,12 @@
+<configuration>
+ <appender name="LOGIT" class="com.zenexity.logit.appender.LogbackAppender">
+     <server>localhost:9000</server>
+     <project>NOWT!FY</project>
+     <layout>
+       <pattern>{"date" : "%date", "level" :  "%level", "logger" : "%logger", "thread" : "%thread", "message" : "%n%message%n%xException%n"}</pattern>
+     </layout>
+  </appender>	
+  <root level="debug">
+    <appender-ref ref="LOGIT"/>
+  </root>
+</configuration> 

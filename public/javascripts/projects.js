@@ -24,7 +24,7 @@ refreshProjects = function() {
             //initSelectionProject();
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert("Getting projects failed");
+            //alert("Getting projects failed");
         }
     });
 };
