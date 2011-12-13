@@ -12,18 +12,19 @@ import JsonSerialization._
 import models.{Project, Log}
 
 object Projects extends Controller {
-  
-  /* List all project */
-  def index() = Action {
-    Ok(views.html.project.index(Project.list()))
-  }
 
-  def getProjects() = Action {
+  /**
+   * View all projects.
+   */
+  def projects() = Action {
     Ok(tojson(Project.list()).toString)
   }
 
-  /* View one project */
-  def view(name: String) = Action {
+  /**
+   * View one project.
+   * @param Project name.
+   */
+  def project(name: String) = Action {
     Project.findByName(name).map { project => 
       Ok(views.html.project.view(project))
     }.getOrElse(NotFound)
@@ -36,7 +37,10 @@ object Projects extends Controller {
     ) 
   )
 
-  /* Create a project if not exist (and add log entry) */
+  /**
+   * Create a project if not exist and add log entry.
+   * @param Project name.
+   */
   def addLog(name: String) = Action { implicit request =>
     logForm.bindFromRequest.fold(
       errors => BadRequest,
@@ -53,8 +57,11 @@ object Projects extends Controller {
       })
   }
 
-  /* List all logs of one project */
-  def getLogs(name: String) = Action {    
+  /**
+   * List all logs.
+   * @param Project name.
+   */
+  def logs(name: String) = Action {    
     Ok(tojson(Project(name).logs).toString)
   }
 }

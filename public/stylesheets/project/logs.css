@@ -1,12 +1,11 @@
-nav.project {
-    background-color: blue;
-    border: solid 1px black;
-}
-
 section.logs {
     color: white;
     background-color: #1E1B1B;
     border: solid 1px black;
+}
+
+section.logs fieldset {
+    margin-top: 5px;
 }
 
 section.logs table {
@@ -21,4 +20,5 @@ section.logs th {
 section.logs td {
     border: solid 1px black;
     background-color: grey;
+    padding: 10px;
 }

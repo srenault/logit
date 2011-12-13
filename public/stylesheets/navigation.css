@@ -1,6 +1,11 @@
 nav {
     height: 40px;
- }
+}
+
+nav.project {
+    background-color: #8BA2BF;
+    border: solid 1px black;
+}
 
 nav ul {
     color: white;

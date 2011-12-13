@@ -3,11 +3,25 @@
 # ~~~~
 
 # Home page
-GET     /                               controllers.Projects.index()
-GET     /projects/all                   controllers.Projects.getProjects()
-GET     /projects/:name                 controllers.Projects.view(name)
-GET     /projects/:name/logs            controllers.Projects.getLogs(name)
-POST    /projects/:name/logs            controllers.Projects.addLog(name)
+
+GET     /                                             controllers.Application.index()
+POST    /signup                                       controllers.Application.signup()
+POST    /signin                                       controllers.Application.signin()
+GET     /logout                                       controllers.Application.logout()
+
+GET     /projects/all                                 controllers.Projects.projects()
+GET     /projects/:name                               controllers.Projects.project(name)
+GET     /projects/:name/logs                          controllers.Projects.logs(name)
+POST    /projects/:name/logs                          controllers.Projects.addLog(name)
+
+GET     /users/:pseudo/projects/all                   controllers.Users.projects(pseudo)
+POST    /users/:pseudo/projects/:name/follow          controllers.Users.follow(pseudo, name)
+GET     /users/:pseudo/projects/:name                 controllers.Users.project(pseudo, name)
+GET     /users/:pseudo/projects/:name/logs            controllers.Users.logs(pseudo, name)
+POST    /users/:pseudo/projects/:name/logs/:logID     controllers.Users.readLog(pseudo, name, logID)
+
+POST    /users/:pseudo/projects/:name/logs            controllers.Users.eval(pseudo, name)
+GET     /users/:pseudo/projects/:name/logs            controllers.Users.reader(pseudo, name)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

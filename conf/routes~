@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                               controllers.Projects.index()
+GET     /projects/all                   controllers.Projects.getProjects()
 GET     /projects/:name                 controllers.Projects.view(name)
 GET     /projects/:name/logs            controllers.Projects.getLogs(name)
 POST    /projects/:name/logs            controllers.Projects.addLog(name)
