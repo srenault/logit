@@ -17,11 +17,9 @@ POST    /projects/:name/logs                          controllers.Projects.addLo
 GET     /users/:pseudo/projects/all                   controllers.Users.projects(pseudo)
 POST    /users/:pseudo/projects/:name/follow          controllers.Users.follow(pseudo, name)
 GET     /users/:pseudo/projects/:name                 controllers.Users.project(pseudo, name)
-GET     /users/:pseudo/projects/:name/logs            controllers.Users.logs(pseudo, name)
-POST    /users/:pseudo/projects/:name/logs/:logID     controllers.Users.readLog(pseudo, name, logID)
-
 POST    /users/:pseudo/projects/:name/logs            controllers.Users.eval(pseudo, name)
 GET     /users/:pseudo/projects/:name/logs            controllers.Users.reader(pseudo, name)
+POST    /users/:pseudo/projects/:name/logs/:logID     controllers.Users.readLog(pseudo, name, logID)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
