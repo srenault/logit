@@ -1,0 +1,22 @@
+@(message: String = "Not ok dude")
+
+@main("") {
+<p>@message</p>
+<fieldset class="signin">
+<legend>Sign In</legend>
+  <form action="@routes.Application.signin()" method="POST">
+    <label>Pseudo   <input type="text" name="pseudo" required /></label>
+    <label>Password <input type="password" name="password" required /></label>
+    <button>Sign In</button>
+  </form>
+</fieldset>
+
+<fieldset class="signup">
+<legend>Sign Up</legend>
+  <form action="@routes.Application.signup()" method="POST">
+    <label>Pseudo   <input type="text" name="pseudo" required /></label>
+    <label>Password <input type="password" name="password" required /></label>
+    <button>Sign Up</button>
+  </form>
+</fieldset>
+}

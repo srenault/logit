@@ -12,10 +12,13 @@ import dispatch.json._
 
 import db.MongoDB
 
-case class Log(projectName: String, data: String = "{}") extends MongoDB {
+/**
+ * Representing a simple log.
+ */
+case class Log(projectName: String, dataJSON: String = "{}") {
 
-  lazy val dataMap: Map[String, Any] = JSON.parseFull(data) match {
-    case Some(data: Map[String, Any]) => data 
+  lazy val data: Map[String, Any] = JSON.parseFull(dataJSON) match {
+    case Some(d: Map[String, Any]) => d
     case _ => Map[String, Any]()
   }
 }
@@ -27,9 +30,9 @@ object Log extends MongoDB {
   def create(log: Log) = {
     val mongoLog = MongoDBObject.newBuilder
     
-    JSON.parseFull(log.data) match {
-      case Some(data: Map[String, Any]) => {
-        mongoLog ++= data 
+    JSON.parseFull(log.dataJSON) match {
+      case Some(d: Map[String, Any]) => {
+        mongoLog ++= d 
         mongoLog +=  "project" -> log.projectName
         insert(TABLE_NAME, mongoLog.result)
       }
@@ -39,15 +42,15 @@ object Log extends MongoDB {
   
   implicit object LogFormat extends Format[Log] {
     def reads(json: JsValue): Log = json match {
-	  case JsObject(m) => Log(fromjson[String](m(JsString("projectName"))),
-							  fromjson[String](m(JsString("data"))))
-	  case _ => throw new RuntimeException("JsObject expected")
+      case JsObject(m) => Log(fromjson[String](m(JsString("projectName"))),
+                              fromjson[String](m(JsString("data"))))
+      case _ => throw new RuntimeException("JsObject expected")
     }
 
     def writes(log: Log): JsValue = {
       JsObject(List(
         (tojson("projectName").asInstanceOf[JsString], tojson(log.projectName)),
-        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.data))
+        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON))
       ))
     }
   }

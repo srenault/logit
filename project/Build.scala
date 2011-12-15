@@ -12,8 +12,10 @@ object ApplicationBuild extends Build {
       "net.debasishg" % "sjson_2.9.1" % "0.15"
     )
 
-    val main = PlayProject(appName, appVersion, appDependencies).settings(defaultScalaSettings:_*).settings(
+//    val main = PlayProject(appName, appVersion, appDependencies).settings(defaultScalaSettings:_*).settings(
       // Add your own project settings here      
-    )
+//    )
+
+    val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings() 
 
 }

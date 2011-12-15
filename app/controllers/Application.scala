@@ -1,17 +1,20 @@
 package controllers
 
-import models._
-
 import play.api._
 import play.api.mvc._
+import play.api.data._
+import format.Formats._
+import validation.Constraints._
+
+import models.User
 
 object Application extends Controller {
 
   /**
    * Home page.
    */
-  def index = Action {
-    Ok
+  def index() = Action {
+    Ok(views.html.index())
   }
 
   /**
@@ -25,8 +28,15 @@ object Application extends Controller {
    * Authenticate user.
    */
   def signin() = Action {
-    Ok
+    Ok(views.html.index("Hy dude"))
   }
+
+  val signinForm = Form(
+    of(User.apply _, User.unapply _) (
+      "pseudo"   -> of[String].verifying(required),
+      "password" -> of[String].verifying(required)
+    )
+  )
 
   /**
    * Log Out user.
@@ -35,3 +45,4 @@ object Application extends Controller {
     Ok
   }
 }
+

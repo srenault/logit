@@ -1,10 +1,9 @@
 @(title: String)(content: Html)
 
 <!DOCTYPE html>
-
 <html>
     <head>
-        <title>@title</title>
+        <title>TITLE @title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logit.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/header.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/navigation.css")">
@@ -17,12 +16,12 @@
         <script src="@routes.Assets.at("javascripts/projects.js")" type="text/javascript"></script>
     </head>
     <header class="header">
-      <p>LOGIT - Listen Yours Applications<p>
+      <p>HEADER<p>
     </header>
     <body>
         @content
     </body>
     <footer class="footer">
-      <p><em>LOGIT - Copyright 2011</em></p>
+      <p>FOOTER</p>
     </footer>
 </html>

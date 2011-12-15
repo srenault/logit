@@ -8,12 +8,12 @@
 <table>
    @project.logs.map{ log =>
       <tr>
-      @log.dataMap.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
+      @log.data.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
          <th>@data._1</th>
       }
       </tr>
       <tr>
-      @log.dataMap.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
+      @log.data.filter(header => (header._1 != "_id" && header._1 != "project")).map { data =>
          <td>@data._2</td>
       }
       </tr>
