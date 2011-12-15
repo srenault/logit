@@ -17,6 +17,10 @@ import db.MongoDB
  */
 case class Log(projectName: String, dataJSON: String = "{}") {
 
+  /**
+   * Log's data.
+   * @return Mapping key/value matching to a log pattern.
+   */
   lazy val data: Map[String, Any] = JSON.parseFull(dataJSON) match {
     case Some(d: Map[String, Any]) => d
     case _ => Map[String, Any]()
@@ -26,8 +30,13 @@ case class Log(projectName: String, dataJSON: String = "{}") {
 object Log extends MongoDB {
   
   val TABLE_NAME = "logs"
-  
-  def create(log: Log) = {
+
+  /**
+   * Create a new Log.
+   * @param A new log.
+   * @return Either the Log successfully created, or None if the log have an invalid format.
+   */
+  def create(log: Log): Option[Log] = {
     val mongoLog = MongoDBObject.newBuilder
     
     JSON.parseFull(log.dataJSON) match {
@@ -35,23 +44,11 @@ object Log extends MongoDB {
         mongoLog ++= d 
         mongoLog +=  "project" -> log.projectName
         insert(TABLE_NAME, mongoLog.result)
+        Some(log)
       }
-      case _ => Logger.warn("Failed to create an log entry")
+      case _ => Logger.warn("Failed to create an log entry"); None
     }
   }
-  
-  implicit object LogFormat extends Format[Log] {
-    def reads(json: JsValue): Log = json match {
-      case JsObject(m) => Log(fromjson[String](m(JsString("projectName"))),
-                              fromjson[String](m(JsString("data"))))
-      case _ => throw new RuntimeException("JsObject expected")
-    }
 
-    def writes(log: Log): JsValue = {
-      JsObject(List(
-        (tojson("projectName").asInstanceOf[JsString], tojson(log.projectName)),
-        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON))
-      ))
-    }
-  }
+  implicit val LogFormat: Format[Log] = asProduct2("projectName", "dataJSON")(Log.apply)(Log.unapply(_).get)
 }

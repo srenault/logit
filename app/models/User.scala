@@ -25,7 +25,7 @@ object User extends MongoDB {
    * Authenticate a User.
    * @param User's pseudo.
    * @param User's password.
-   * @return Either a the successfully created User or an exception
+   * @return Either the found User, or None.
    */
   def authenticate(pseudo: String, password: String): Option[User] = {
     val query  = MongoDBObject("pseudo"   -> pseudo,
@@ -39,7 +39,7 @@ object User extends MongoDB {
   /**
    * Create a new User.
    * @param New User.
-   * @return Either User/None, or an Exception.
+   * @return The User successfully created.
    */
   def create(newUser: User): User = {
     val mongoUser = MongoDBObject.newBuilder
@@ -53,7 +53,7 @@ object User extends MongoDB {
   /**
    * Find a User by pseudo.
    * @param User's pseudo.
-   * @return Either User/None, or an Exception.
+   * @return Either the found User, or None.
    */
   def findByPseudo(pseudo: String): Option[User] = {
     val query  = MongoDBObject("pseudo" -> pseudo)

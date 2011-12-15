@@ -12,7 +12,7 @@ GET     /logout                                       controllers.Application.lo
 GET     /projects/all                                 controllers.Projects.projects()
 GET     /projects/:name                               controllers.Projects.project(name)
 GET     /projects/:name/logs                          controllers.Projects.logs(name)
-POST    /projects/:name/logs                          controllers.Projects.addLog(name)
+POST    /projects/:name/logs                          controllers.Projects.addUpLog(name)
 
 GET     /users/:pseudo/projects/all                   controllers.Users.projects(pseudo)
 POST    /users/:pseudo/projects/:name/follow          controllers.Users.follow(pseudo, name)

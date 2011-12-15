@@ -11,10 +11,10 @@ object Logs extends Controller {
    */
   def create(projectName: String, log: String) = Action {
     Project.findByName(projectName).map { project =>
-      project.addLog(log)
+      project.addUpLog(log)
     }.getOrElse {
       val newProject = Project(projectName)
-      newProject.addLog(log)
+      newProject.addUpLog(log)
     }
     Ok
   }

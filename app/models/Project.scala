@@ -11,27 +11,47 @@ import dispatch.json._
 import db.MongoDB
 
 case class Project(name: String) extends MongoDB {
-  def logs: List[Log] = {
+
+  /**
+   * List logs' project.
+   * @return Logs' project.
+   */
+  def logs(): List[Log] = {
     val query = MongoDBObject("project" -> name)
     selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
 
-  def addLog(log: String) = {
+  /** Add up a new log on project' stack.
+   * @return The Log successfully added.
+   * @param A new log.
+   */
+  def addUpLog(log: String): Option[Log] = {
     Logger.debug("Creating log entry with " + log)
     Log.create(Log(name, log))
   }
 }
 
 object Project extends MongoDB {
+
   val TABLE_NAME = "projects"
 
-  def create(project: Project) = {
+  /**
+   * Create a new Project.
+   * @return The Project successfully created.
+   */
+  def create(project: Project): Project = {
     val mongoProject = MongoDBObject.newBuilder
     mongoProject += "name" -> project.name
 
     insert(TABLE_NAME, mongoProject.result)
+    project
   }
-  
+
+  /**
+   * Find a Project by name.
+   * @param Project name
+   * @return Either the found Project, or None.
+   */
   def findByName(name: String): Option[Project] = {
     val query = MongoDBObject("name" -> name)
     selectOne(TABLE_NAME, query).flatMap { result =>
@@ -39,6 +59,10 @@ object Project extends MongoDB {
     }.orElse(None)
   }
 
+  /**
+   * Retrieve all Projects.
+   * @return Projects list.
+   */
   def list(): List[Project] = {
     try {
       selectAll(TABLE_NAME).map { result =>

@@ -41,17 +41,17 @@ object Projects extends Controller {
    * Create a project if not exist and add log entry.
    * @param Project name.
    */
-  def addLog(name: String) = Action { implicit request =>
+  def addUpLog(name: String) = Action { implicit request =>
     logForm.bindFromRequest.fold(
       errors => BadRequest,
       {
         case (projectName, log) =>
            Project.findByName(name).map { project =>
-             project.addLog(log)
+             project.addUpLog(log)
            }.getOrElse {
              val newProject = Project(name)
              Project.create(newProject)
-             newProject.addLog(log)
+             newProject.addUpLog(log)
            }
         Ok
       })
