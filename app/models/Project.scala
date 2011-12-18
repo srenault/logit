@@ -10,16 +10,13 @@ import dispatch.json._
 
 import db.MongoDB
 
-case class Project(name: String) extends MongoDB {
+case class Project(name: String, debug: Boolean = false) extends MongoDB {
 
   /**
    * List logs' project.
    * @return Logs' project.
    */
-  def logs(): List[Log] = {
-    val query = MongoDBObject("project" -> name)
-    selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
-  }
+  def logs(): List[Log] = Log.findByProject(name)
 
   /** Add up a new log on project' stack.
    * @return The Log successfully added.

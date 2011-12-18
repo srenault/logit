@@ -15,7 +15,7 @@ import db.MongoDB
 /**
  * Representing a simple log.
  */
-case class Log(projectName: String, dataJSON: String = "{}") {
+case class Log(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean: false) {
 
   /**
    * Log's data.
@@ -48,6 +48,16 @@ object Log extends MongoDB {
       }
       case _ => Logger.warn("Failed to create an log entry"); None
     }
+  }
+
+  /**
+   * Find logs by Project name.
+   * @param Project name
+   * @return The found Projects.
+   */
+  def findByProject(name: String): List[Log] = {
+    val query = MongoDBObject("project" -> name)
+    selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
 
   implicit val LogFormat: Format[Log] = asProduct2("projectName", "dataJSON")(Log.apply)(Log.unapply(_).get)

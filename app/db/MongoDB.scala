@@ -24,7 +24,10 @@ trait MongoDB {
   }
 
   def insert(tableName: String, model: MongoDBObject) = {
-    db(tableName) += model
+    play.Logger.error("#############")
+    val a = db(tableName) += model
+    play.Logger.error("#############")
+    a
   }
 
   def selectAll(tableName: String) = {

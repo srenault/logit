@@ -53,7 +53,7 @@ object Projects extends Controller {
              Project.create(newProject)
              newProject.addUpLog(log)
            }
-        Ok
+        Created
       })
   }
 

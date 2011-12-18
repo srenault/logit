@@ -16,6 +16,6 @@ object Logs extends Controller {
       val newProject = Project(projectName)
       newProject.addUpLog(log)
     }
-    Ok
+    Created
   }
 }

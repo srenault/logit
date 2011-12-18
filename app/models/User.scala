@@ -12,9 +12,21 @@ case class User(pseudo: String, password: String) {
 
   /**
    * Retrieve user's projects.
-   * Projects list.
+   * @return Projects list.
    */
-  def projects: List[UserProject] = Nil
+  def projects: List[Project] = Nil
+
+  /**
+   * Followed Projects by user.
+   * @return List of followed Projects.
+   */
+  def followedProjects: List[Project] = Nil
+
+  /**
+   * Debugged Projects by user.
+   * @return List of debugged Projects.
+   */
+  def debuggedProjects: List[Project] = Nil
 }
 
 object User extends MongoDB {
@@ -65,14 +77,4 @@ object User extends MongoDB {
       pwd    <- r.getAs[String]("password")
     } yield(User(pseudo, pwd))).orElse(None)
   }
-}
-
-case class UserProject() {
-  def logs: List[UserLog] = Nil
-}
-object UserProject {
-}
-
-case class UserLog()
-object UserLog {
 }

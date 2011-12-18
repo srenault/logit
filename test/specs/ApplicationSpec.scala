@@ -13,12 +13,11 @@ class SigninRequest[AnyContent] extends Request[AnyContent] {
   def method = "POST"
   def queryString = Map.empty()
   def body: AnyContent = AnyContentAsUrlFormEncoded(Map("pseudo"->Seq("litig"),
-                                                       "password" -> Seq("password"))).asInstanceOf[AnyContent]
-  def path ="signin"
-
+                                                        "password" -> Seq("password"))).asInstanceOf[AnyContent]
+  def path ="/signin"
   def headers = new Headers {
-   def getAll(key: String) = Nil
-   def keys = Set.empty
+    def getAll(key: String) = Nil
+    def keys = Set.empty
   }
   def cookies = new Cookies {
       def get(name: String) = None
@@ -30,7 +29,7 @@ object SigninSpec extends Specification {
   "the application " should {
     "redirect a user to his home page when credentials are valid" in {
         //withApplication(Nil, MockData.dataSource) {
-          val action = controllers.Application.index()
+          val action = controllers.Application.signin()
           val result = action.apply(new SigninRequest)
           val extracted = Extract.from(result)
           extracted._1.toString must equalTo("200")
