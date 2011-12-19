@@ -24,6 +24,7 @@ class SigninRequest[AnyContent] extends Request[AnyContent] {
   }
 }
 
+/*
 object SigninSpec extends Specification {
 
   "the application " should {
@@ -38,4 +39,4 @@ object SigninSpec extends Specification {
         //}
     }
   }
-}
+}*/

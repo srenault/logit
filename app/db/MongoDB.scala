@@ -25,6 +25,8 @@ trait MongoDB {
 
   def insert(tableName: String, model: MongoDBObject) = db(tableName) += model
 
+  def update(tableName: String, key: MongoDBObject, model: MongoDBObject) = db(tableName).update(key, model)
+
   def selectAll(tableName: String) = db(tableName).find()
 
   def selectBy(tableName: String, model: MongoDBObject) = db(tableName).find(model)

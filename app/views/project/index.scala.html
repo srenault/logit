@@ -1,18 +1,34 @@
-@(projects: List[Project] = Nil)
+@(user: User, projects: List[Project])
 
-@main(":: LOGIT ::") {
-<nav class="project"><ul><li>{ HOME }</li></ul></nav>
+@main("") {
 <section class="projects">
 <fieldset>
-  <legend>Projects</legend>
+  <legend>Available projects</legend>
   <ul>
-  @projects.map { project =>
+  @projects.filter(p => !user.followedProjects.find(pu => pu.name == p.name)).map { project =>
      <li><a href="projects/@project.name">@project.name</a></li>
   }
   </ul>
 </section>
 </fieldset>
-<script type="text/javascript">
-  window.setInterval(refreshProjects, 5000);
-</script>
+
+<fieldset>
+  <legend>Followed projects</legend>
+  <ul>
+  @user.followedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</section>
+</fieldset>
+
+<fieldset>
+  <legend>Debugged projects</legend>
+  <ul>
+  @user.debuggedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</section>
+</fieldset>
 }

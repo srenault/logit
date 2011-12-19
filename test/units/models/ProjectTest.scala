@@ -30,3 +30,14 @@ object ProjectTest extends Specification {
     }
   }
 }
+
+object UserProjectTest extends Specification {
+ 
+  "UserProject companion object" should {
+    "make to dirty a user project when a new log is added" in {
+      withApplication(Nil, MockData.dataSource) {
+        UserProject.dirty("COOL")
+      }
+    }
+  }
+}

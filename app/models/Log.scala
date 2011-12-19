@@ -15,7 +15,7 @@ import db.MongoDB
 /**
  * Representing a simple log.
  */
-case class Log(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean= false) {
+case class Log(projectName: String, dataJSON: String = "{}") {
 
   /**
    * Log's data.
@@ -61,5 +61,24 @@ object Log extends MongoDB {
     selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
 
-  implicit val LogFormat: Format[Log] = asProduct4("projectName", "dataJSON", "read", "debug")(Log.apply)(Log.unapply(_).get)
+  implicit object LogFormat extends Format[Log] {
+    def reads(json: JsValue): Log = json match {
+      case JsObject(m) => Log(fromjson[String](m(JsString("projectName"))),
+                              fromjson[String](m(JsString("data"))))
+      case _ => throw new RuntimeException("JsObject expected")
+    }
+
+    def writes(log: Log): JsValue = {
+      JsObject(List(
+        (tojson("projectName").asInstanceOf[JsString], tojson(log.projectName)),
+        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON))
+      ))
+    }
+  }
+}
+
+case class UserLog(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean= false) extends MongoDB {
+}
+
+object UserLog extends MongoDB {
 }

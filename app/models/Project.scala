@@ -39,6 +39,7 @@ object Project extends MongoDB {
   def create(project: Project): Project = {
     val mongoProject = MongoDBObject.newBuilder
     mongoProject += "name" -> project.name
+    mongoProject += "debug" -> project.debug
 
     insert(TABLE_NAME, mongoProject.result)
     project
@@ -52,7 +53,8 @@ object Project extends MongoDB {
   def findByName(name: String): Option[Project] = {
     val query = MongoDBObject("name" -> name)
     selectOne(TABLE_NAME, query).flatMap { result =>
-      Some(Project(result.getAs[String]("name").get))
+      Some(Project(result.getAs[String]("name").get,
+                   result.getAs[Boolean]("debug").get))
     }.orElse(None)
   }
 
@@ -61,23 +63,54 @@ object Project extends MongoDB {
    * @return Projects list.
    */
   def list(): List[Project] = {
-    try {
-      selectAll(TABLE_NAME).map { result =>
-        Project(result.getAs[String]("name").get)
-      }.toList
-    } catch {
-      case e: Exception => Nil
-    }
+    selectAll(TABLE_NAME).map { result =>
+      Project(result.getAs[String]("name").get,
+              result.getAs[Boolean]("debug").get)
+    }.toList
   }
 
-  implicit object ProjectFormat extends Format[Project] {
-    def reads(json: JsValue): Project = json match {
-	  case JsObject(m) => Project(fromjson[String](m(JsString("name"))))
-	  case _ => throw new RuntimeException("JsObject expected")
-    }
+  implicit val ProjectFormat: Format[Project] = asProduct2("name", "debug")(Project.apply)(Project.unapply(_).get)
+}
 
-    def writes(project: Project): JsValue = {
-      JsObject(List((tojson("name").asInstanceOf[JsString], tojson(project.name))))
-    }
+case class UserProject(name: String, pseudo: String, debug: Boolean = false, dirty: Boolean = false) extends MongoDB
+object UserProject extends MongoDB{
+
+  val TABLE_NAME = "user_projects"
+
+  /**
+   * Create a new User Project.
+   * @return The User Project successfully created.
+   */
+  def create(project: UserProject): UserProject = {
+    val mongoProject = MongoDBObject.newBuilder
+    mongoProject += "name" -> project.name
+    mongoProject += "pseudo" -> project.pseudo
+    mongoProject += "debug" -> project.debug
+    mongoProject += "dirty" -> project.debug
+
+    insert(TABLE_NAME, mongoProject.result)
+    project
   }
+
+  /**
+   * Find Projects followed by user.
+   * @param User's pseudo.
+   * @return Either the founds User Projects, or Nil.
+   */
+  def find(pseudo: String, debug: Boolean): List[UserProject] = {
+    val query = MongoDBObject("pseudo" -> pseudo,"debug" -> debug)
+
+    selectOne(TABLE_NAME, query).map { result =>
+      UserProject(result.getAs[String]("name").get,
+                  result.getAs[String]("pseudo").get,
+                  result.getAs[Boolean]("debug").get,
+                  result.getAs[Boolean]("dirty").get)
+    }.toList
+  }
+
+  def dirty() = {
+    
+  }
+
+  implicit val UserProjectFormat: Format[UserProject] = asProduct4("name", "pseudo", "debug", "dirty")(UserProject.apply)(UserProject.unapply(_).get)
 }

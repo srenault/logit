@@ -6,7 +6,7 @@ import play.api.data._
 import format.Formats._
 import validation.Constraints._
 
-import models.User
+import models.{User, Project}
 
 object Application extends Controller {
 
@@ -42,8 +42,18 @@ object Application extends Controller {
   /**
    * Authenticate user.
    */
-  def signin() = Action {
-    Ok
+  def signin() = Action { implicit request =>
+    signinForm.bindFromRequest.fold(
+      errors => Ok(views.html.index(signupForm)),
+      {
+        case (pseudo, password) => 
+          User.authenticate(pseudo, password).map { u =>
+            Ok(views.html.project.index(u, Project.list()))
+          }.getOrElse{
+            play.Logger.debug("hey")
+            Ok(views.html.index(signupForm))
+          }
+      })
   }
 
   val signinForm = Form(

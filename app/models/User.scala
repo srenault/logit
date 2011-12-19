@@ -11,22 +11,28 @@ import db.MongoDB
 case class User(pseudo: String, email: String, password: String) {
 
   /**
-   * Retrieve user's projects.
-   * @return Projects list.
+   * Create a debug Project.
+   * @return List of followed Projects.
    */
-  def projects: List[Project] = Nil
+  def debugProject(projectName: String) = UserProject.create(UserProject(projectName, pseudo, true))
 
   /**
    * Followed Projects by user.
    * @return List of followed Projects.
    */
-  def followedProjects: List[Project] = Nil
+  def followProject(projectName: String) = UserProject.create(UserProject(projectName, pseudo))
+
+  /**
+   * Followed Projects by user.
+   * @return List of followed Projects.
+   */
+  def followedProjects: List[UserProject] = UserProject.find(pseudo, false)
 
   /**
    * Debugged Projects by user.
    * @return List of debugged Projects.
    */
-  def debuggedProjects: List[Project] = Nil
+  def debuggedProjects: List[UserProject] = UserProject.find(pseudo, true)
 }
 
 object User extends MongoDB {
