@@ -1,7 +1,7 @@
-@(message: String = "Not ok dude")
+@(signupForm: Form[models.User])
 
 @main("") {
-<p>@message</p>
+
 <fieldset class="signin">
 <legend>Sign In</legend>
   <form action="@routes.Application.signin()" method="POST">
@@ -14,8 +14,34 @@
 <fieldset class="signup">
 <legend>Sign Up</legend>
   <form action="@routes.Application.signup()" method="POST">
-    <label>Pseudo   <input type="text" name="pseudo" required /></label>
-    <label>Password <input type="password" name="password" required /></label>
+
+    @signupForm.forField("pseudo") { field =>
+    <label>Pseudo <input type="text" name="@field.name" value="@field.value" /></label>
+      <ul class="errors">
+        @field.error.map { error =>
+        <li>@error</li>
+        }
+      </ul>
+    }
+
+    @signupForm.forField("email") { field =>
+    <label>Email <input type="email" name="@field.name" value="@field.value" /></label>
+    <ul class="errors">
+      @field.error.map { error =>
+      <li>@error</li>
+      }
+    </ul>
+    }
+
+    @signupForm.forField("password") { field =>
+    <label>Password <input type="password" name="@field.name" value="@field.value" /></label>
+    <ul class="errors">
+      @field.error.map { error =>
+      <li>@error</li>
+      }
+    </ul>
+    }
+
     <button>Sign Up</button>
   </form>
 </fieldset>

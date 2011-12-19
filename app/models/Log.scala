@@ -15,12 +15,13 @@ import db.MongoDB
 /**
  * Representing a simple log.
  */
-case class Log(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean: false) {
+case class Log(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean= false) {
 
   /**
    * Log's data.
    * @return Mapping key/value matching to a log pattern.
    */
+
   lazy val data: Map[String, Any] = JSON.parseFull(dataJSON) match {
     case Some(d: Map[String, Any]) => d
     case _ => Map[String, Any]()
@@ -60,5 +61,5 @@ object Log extends MongoDB {
     selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
   }
 
-  implicit val LogFormat: Format[Log] = asProduct2("projectName", "dataJSON")(Log.apply)(Log.unapply(_).get)
+  implicit val LogFormat: Format[Log] = asProduct4("projectName", "dataJSON", "read", "debug")(Log.apply)(Log.unapply(_).get)
 }

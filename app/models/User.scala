@@ -8,7 +8,7 @@ import dispatch.json._
 
 import db.MongoDB
 
-case class User(pseudo: String, password: String) {
+case class User(pseudo: String, email: String, password: String) {
 
   /**
    * Retrieve user's projects.
@@ -43,9 +43,13 @@ object User extends MongoDB {
     val query  = MongoDBObject("pseudo"   -> pseudo,
                                "password" -> password)
 
-    selectOne(TABLE_NAME, query).flatMap{
-      r => Some(User(pseudo, password))
-    }.orElse(None)
+    val result = selectOne(TABLE_NAME, query)
+    (for { 
+      r <- result
+      pseudo <- r.getAs[String]("pseudo")
+      email  <- r.getAs[String]("email")
+      pwd    <- r.getAs[String]("password")
+    } yield(User(pseudo, email, pwd))).orElse(None)
   }
 
   /**
@@ -56,6 +60,7 @@ object User extends MongoDB {
   def create(newUser: User): User = {
     val mongoUser = MongoDBObject.newBuilder
     mongoUser += "pseudo" -> newUser.pseudo
+    mongoUser += "email" -> newUser.email
     mongoUser += "password" -> newUser.password
 
     insert(TABLE_NAME, mongoUser.result)
@@ -74,7 +79,8 @@ object User extends MongoDB {
     (for { 
       r <- result
       pseudo <- r.getAs[String]("pseudo")
+      email  <- r.getAs[String]("email")
       pwd    <- r.getAs[String]("password")
-    } yield(User(pseudo, pwd))).orElse(None)
+    } yield(User(pseudo, email, pwd))).orElse(None)
   }
 }

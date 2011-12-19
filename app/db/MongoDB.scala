@@ -23,22 +23,11 @@ trait MongoDB {
     database
   }
 
-  def insert(tableName: String, model: MongoDBObject) = {
-    play.Logger.error("#############")
-    val a = db(tableName) += model
-    play.Logger.error("#############")
-    a
-  }
+  def insert(tableName: String, model: MongoDBObject) = db(tableName) += model
 
-  def selectAll(tableName: String) = {
-    db(tableName).find()
-  }
+  def selectAll(tableName: String) = db(tableName).find()
 
-  def selectBy(tableName: String, model: MongoDBObject) = {
-    db(tableName).find(model)
-  }
+  def selectBy(tableName: String, model: MongoDBObject) = db(tableName).find(model)
 
-  def selectOne(tableName: String, model: MongoDBObject) = {
-    db(tableName).findOne(model)
-  }
+  def selectOne(tableName: String, model: MongoDBObject) = db(tableName).findOne(model)
 }

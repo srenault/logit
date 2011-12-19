@@ -14,28 +14,43 @@ object Application extends Controller {
    * Home page.
    */
   def index() = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(signupForm))
   }
 
   /**
    * Create a new user.
    */
-  def signup() = Action {
-    Ok
+  def signup() = Action { implicit request =>
+    signupForm.bindFromRequest.fold(
+      errors => Ok(views.html.index(signupForm)),
+      {
+        case u: User => 
+          User.create(u)
+          Ok(views.html.index(signupForm))
+      })
   }
+
+  
+  val signupForm = Form(
+    of(User.apply _, User.unapply _) (
+      "pseudo"   -> of[String].verifying(required),
+      "email"    -> of[String].verifying(required),
+      "password" -> of[String].verifying(required)
+    )
+  )
 
   /**
    * Authenticate user.
    */
   def signin() = Action {
-    Ok(views.html.index("Hy dude"))
+    Ok
   }
 
   val signinForm = Form(
-    of(User.apply _, User.unapply _) (
-      "pseudo"   -> of[String].verifying(required),
-      "password" -> of[String].verifying(required)
-    )
+    of(
+      "pseudo" -> text,
+      "password" -> text
+    ) 
   )
 
   /**
