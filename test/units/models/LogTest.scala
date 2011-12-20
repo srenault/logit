@@ -14,7 +14,7 @@ object LogTest extends Specification {
 
   val PROD_PROJECT = "PROD_PROJECT"
 
-  val log = Log(PROD_PROJECT, JsValue.fromString("{\"logger\" : \"main.Zest\" , \"thread\" : \"main\" , \"date\" : \"2011-11-25 17:56:24,832\" , \"message\" : \"\\nInitialize your variable !\\n\\n\" , \"level\" : \"ERROR\" , \"project\" : \"ZEST\"}"))
+  val logData = "{\"logger\" : \"main.Zest\" , \"thread\" : \"main\" , \"date\" : \"2011-11-25 17:56:24,832\" , \"message\" : \"\\nInitialize your variable !\\n\\n\" , \"level\" : \"ERROR\" , \"project\" : \"ZEST\"}"
 
   "Log compagnion object" should {
 
@@ -26,7 +26,7 @@ object LogTest extends Specification {
 
     "create log entry" in {
       withApplication(Nil, MockData.dataSource) {
-        Log.create(log)
+        Log.create(Log(PROD_PROJECT, JsValue.fromString(logData)))
         Log.count must equalTo (1)
       }
     }
