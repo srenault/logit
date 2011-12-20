@@ -26,18 +26,16 @@ case class User(pseudo: String, email: String, password: String) {
    * Followed Projects by user.
    * @return List of followed Projects.
    */
-  def followedProjects: List[UserProject] = UserProject.find(pseudo, false)
+  def followedProjects: List[UserProject] = UserProject.byUser(pseudo, false)
 
   /**
    * Debugged Projects by user.
    * @return List of debugged Projects.
    */
-  def debuggedProjects: List[UserProject] = UserProject.find(pseudo, true)
+  def debuggedProjects: List[UserProject] = UserProject.byUser(pseudo, true)
 }
 
-object User extends MongoDB {
-
-  val TABLE_NAME = "users" /** User table name. */
+object User extends MongoDB("users") {
 
   /**
    * Authenticate a User.
@@ -49,7 +47,7 @@ object User extends MongoDB {
     val query  = MongoDBObject("pseudo"   -> pseudo,
                                "password" -> password)
 
-    val result = selectOne(TABLE_NAME, query)
+    val result = selectOne(query)
     (for { 
       r <- result
       pseudo <- r.getAs[String]("pseudo")
@@ -69,7 +67,7 @@ object User extends MongoDB {
     mongoUser += "email" -> newUser.email
     mongoUser += "password" -> newUser.password
 
-    insert(TABLE_NAME, mongoUser.result)
+    insert(mongoUser.result)
     newUser
   }
 
@@ -80,7 +78,7 @@ object User extends MongoDB {
    */
   def findByPseudo(pseudo: String): Option[User] = {
     val query  = MongoDBObject("pseudo" -> pseudo)
-    val result = selectOne(TABLE_NAME, query)
+    val result = selectOne(query)
     
     (for { 
       r <- result

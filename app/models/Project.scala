@@ -10,27 +10,24 @@ import dispatch.json._
 
 import db.MongoDB
 
-case class Project(name: String, debug: Boolean = false) extends MongoDB {
+case class Project(name: String, debug: Boolean = false) extends MongoDB("projects") {
 
   /**
    * List logs' project.
    * @return Logs' project.
    */
-  def logs(): List[Log] = Log.findByProject(name)
+  def logs: List[Log] = Log.findByProject(name)
 
   /** Add up a new log on project' stack.
    * @return The Log successfully added.
    * @param A new log.
    */
   def addUpLog(log: String): Option[Log] = {
-    Logger.debug("Creating log entry with " + log)
-    Log.create(Log(name, log))
+    Log.create(Log(name, JsValue.fromString(log)))
   }
 }
 
-object Project extends MongoDB {
-
-  val TABLE_NAME = "projects"
+object Project extends MongoDB("projects") {
 
   /**
    * Create a new Project.
@@ -41,7 +38,7 @@ object Project extends MongoDB {
     mongoProject += "name" -> project.name
     mongoProject += "debug" -> project.debug
 
-    insert(TABLE_NAME, mongoProject.result)
+    insert(mongoProject.result)
     project
   }
 
@@ -52,7 +49,7 @@ object Project extends MongoDB {
    */
   def findByName(name: String): Option[Project] = {
     val query = MongoDBObject("name" -> name)
-    selectOne(TABLE_NAME, query).flatMap { result =>
+    selectOne(query).flatMap { result =>
       Some(Project(result.getAs[String]("name").get,
                    result.getAs[Boolean]("debug").get))
     }.orElse(None)
@@ -63,7 +60,7 @@ object Project extends MongoDB {
    * @return Projects list.
    */
   def list(): List[Project] = {
-    selectAll(TABLE_NAME).map { result =>
+    selectAll().map { result =>
       Project(result.getAs[String]("name").get,
               result.getAs[Boolean]("debug").get)
     }.toList
@@ -72,10 +69,8 @@ object Project extends MongoDB {
   implicit val ProjectFormat: Format[Project] = asProduct2("name", "debug")(Project.apply)(Project.unapply(_).get)
 }
 
-case class UserProject(name: String, pseudo: String, debug: Boolean = false, dirty: Boolean = false) extends MongoDB
-object UserProject extends MongoDB{
-
-  val TABLE_NAME = "user_projects"
+case class UserProject(name: String, pseudo: String, debug: Boolean = false, dirty: Boolean = false) extends MongoDB("user_projects")
+object UserProject extends MongoDB("user_projects"){
 
   /**
    * Create a new User Project.
@@ -86,21 +81,21 @@ object UserProject extends MongoDB{
     mongoProject += "name" -> project.name
     mongoProject += "pseudo" -> project.pseudo
     mongoProject += "debug" -> project.debug
-    mongoProject += "dirty" -> project.debug
+    mongoProject += "dirty" -> project.dirty
 
-    insert(TABLE_NAME, mongoProject.result)
+    insert(mongoProject.result)
     project
   }
 
   /**
-   * Find Projects followed by user.
+   * Find Projects followed/debugged by user.
    * @param User's pseudo.
    * @return Either the founds User Projects, or Nil.
    */
-  def find(pseudo: String, debug: Boolean): List[UserProject] = {
+  def byUser(pseudo: String, debug: Boolean): List[UserProject] = {
     val query = MongoDBObject("pseudo" -> pseudo,"debug" -> debug)
 
-    selectOne(TABLE_NAME, query).map { result =>
+    selectOne(query).map { result =>
       UserProject(result.getAs[String]("name").get,
                   result.getAs[String]("pseudo").get,
                   result.getAs[Boolean]("debug").get,
@@ -108,7 +103,7 @@ object UserProject extends MongoDB{
     }.toList
   }
 
-  def dirty() = {
+  def dirty(name: String) = {
     
   }
 

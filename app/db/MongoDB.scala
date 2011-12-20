@@ -5,7 +5,27 @@ import play.api.{ Configuration, Play }
 import play.api.Play.current
 import com.mongodb.casbah.Imports._
 
-trait MongoDB {
+class MongoDB(tableName: String) {
+  import MongoDB._
+
+  def insert(model: MongoDBObject) = db(tableName) += model
+
+  //def update(tableName: String, key: MongoDBObject, model: MongoDBObject) = db(tableName).findAndModify(key, model)
+
+  //def remove(tableName: String, key: MongoDBObject, model: MongoDBObject) = db(tableName).findAndRemove(key, model)
+
+  def count = db(tableName).count
+
+  def clear() = db(tableName).dropCollection()
+
+  def selectAll() = db(tableName).find()
+
+  def selectBy(model: MongoDBObject) = db(tableName).find(model)
+
+  def selectOne(model: MongoDBObject) = db(tableName).findOne(model)
+}
+
+object MongoDB {
 
   val DB_NAME = "logIt"
   
@@ -23,13 +43,5 @@ trait MongoDB {
     database
   }
 
-  def insert(tableName: String, model: MongoDBObject) = db(tableName) += model
-
-  def update(tableName: String, key: MongoDBObject, model: MongoDBObject) = db(tableName).update(key, model)
-
-  def selectAll(tableName: String) = db(tableName).find()
-
-  def selectBy(tableName: String, model: MongoDBObject) = db(tableName).find(model)
-
-  def selectOne(tableName: String, model: MongoDBObject) = db(tableName).findOne(model)
+  def clearAll() = db.dropDatabase()
 }

@@ -28,9 +28,11 @@ case class Log(projectName: String, dataJSON: String = "{}") {
   }
 }
 
-object Log extends MongoDB {
-  
-  val TABLE_NAME = "logs"
+object Log extends MongoDB("logs") {
+
+  def apply(projectName: String, dataJSON: JsValue): Log = {
+    Log(projectName, dataJSON.toString)
+  }
 
   /**
    * Create a new Log.
@@ -44,7 +46,7 @@ object Log extends MongoDB {
       case Some(d: Map[String, Any]) => {
         mongoLog ++= d 
         mongoLog +=  "project" -> log.projectName
-        insert(TABLE_NAME, mongoLog.result)
+        insert(mongoLog.result)
         Some(log)
       }
       case _ => Logger.warn("Failed to create an log entry"); None
@@ -58,7 +60,7 @@ object Log extends MongoDB {
    */
   def findByProject(name: String): List[Log] = {
     val query = MongoDBObject("project" -> name)
-    selectBy(Log.TABLE_NAME, query).map(log => Log(name,log.toString)).toList
+    selectBy(query).map(log => Log(name,log.toString)).toList
   }
 
   implicit object LogFormat extends Format[Log] {
@@ -75,10 +77,4 @@ object Log extends MongoDB {
       ))
     }
   }
-}
-
-case class UserLog(projectName: String, dataJSON: String = "{}", read: Boolean = false, debug: Boolean= false) extends MongoDB {
-}
-
-object UserLog extends MongoDB {
 }

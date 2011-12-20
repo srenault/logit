@@ -9,6 +9,7 @@ POST    /signup                                       controllers.Application.si
 POST    /signin                                       controllers.Application.signin()
 GET     /logout                                       controllers.Application.logout()
 
+GET     /projects                                     controllers.Projects.index()
 GET     /projects/all                                 controllers.Projects.projects()
 GET     /projects/:name                               controllers.Projects.project(name)
 GET     /projects/:name/logs                          controllers.Projects.logs(name)

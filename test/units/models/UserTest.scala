@@ -6,10 +6,17 @@ import play.api.test._
 import play.api.test.MockApplication._
 
 import models.{User, Project, UserProject}
+import db.MongoDB
 
 object UserTest extends Specification {
 
   "User compagnion object" should {
+
+    "init database" in {
+      withApplication(Nil, MockData.dataSource) {
+        MongoDB.clearAll()
+      }
+    }
 
     "create user with username & password" in {
       withApplication(Nil, MockData.dataSource) {

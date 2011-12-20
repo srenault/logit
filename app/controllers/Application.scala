@@ -26,7 +26,7 @@ object Application extends Controller {
       {
         case u: User => 
           User.create(u)
-          Ok(views.html.index(signupForm))
+          Redirect(routes.Application.index())
       })
   }
 
@@ -48,10 +48,9 @@ object Application extends Controller {
       {
         case (pseudo, password) => 
           User.authenticate(pseudo, password).map { u =>
-            Ok(views.html.project.index(u, Project.list()))
+            Redirect(routes.Projects.index())
           }.getOrElse{
-            play.Logger.debug("hey")
-            Ok(views.html.index(signupForm))
+            Redirect(routes.Application.index())
           }
       })
   }
