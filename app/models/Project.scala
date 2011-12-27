@@ -16,7 +16,7 @@ case class Project(name: String, debug: Boolean = false) extends MongoDB("projec
    * List logs' project.
    * @return Logs' project.
    */
-  def logs: List[Log] = Log.findByProject(name)
+  def logs: List[Log] = Log.byProject(name)
 
   /** Add up a new log on project' stack.
    * @return The Log successfully added.
@@ -47,7 +47,7 @@ object Project extends MongoDB("projects") {
    * @param Project name
    * @return Either the found Project, or None.
    */
-  def findByName(name: String): Option[Project] = {
+  def byName(name: String): Option[Project] = {
     val query = MongoDBObject("name" -> name)
     selectOne(query).flatMap { result =>
       Some(Project(result.getAs[String]("name").get,
@@ -69,43 +69,77 @@ object Project extends MongoDB("projects") {
   implicit val ProjectFormat: Format[Project] = asProduct2("name", "debug")(Project.apply)(Project.unapply(_).get)
 }
 
-case class UserProject(name: String, pseudo: String, debug: Boolean = false, dirty: Boolean = false) extends MongoDB("user_projects")
-object UserProject extends MongoDB("user_projects"){
+case class FollowedProject(name: String, pseudo: String, dirty: Boolean = false) extends MongoDB("projects_fw") {
+  def logs = Nil
+}
+object FollowedProject extends MongoDB("projects_fw"){
 
   /**
-   * Create a new User Project.
-   * @return The User Project successfully created.
+   * Create a new Followed Project.
+   * @return The Followed Project successfully created.
    */
-  def create(project: UserProject): UserProject = {
+  def create(name: String, pseudo: String): FollowedProject = {
     val mongoProject = MongoDBObject.newBuilder
-    mongoProject += "name" -> project.name
-    mongoProject += "pseudo" -> project.pseudo
-    mongoProject += "debug" -> project.debug
-    mongoProject += "dirty" -> project.dirty
+    mongoProject += "name" -> name
+    mongoProject += "pseudo" -> pseudo
+    mongoProject += "dirty" -> false
 
     insert(mongoProject.result)
-    project
+    FollowedProject(name, pseudo)
   }
 
   /**
-   * Find Projects followed/debugged by user.
+   * Find Projects followed by user.
    * @param User's pseudo.
    * @return Either the founds User Projects, or Nil.
    */
-  def byUser(pseudo: String, debug: Boolean): List[UserProject] = {
-    val query = MongoDBObject("pseudo" -> pseudo,"debug" -> debug)
+  def byUser(pseudo: String): List[FollowedProject] = {
+    val query = MongoDBObject("pseudo" -> pseudo)
 
     selectOne(query).map { result =>
-      UserProject(result.getAs[String]("name").get,
+      FollowedProject(result.getAs[String]("name").get,
                   result.getAs[String]("pseudo").get,
-                  result.getAs[Boolean]("debug").get,
                   result.getAs[Boolean]("dirty").get)
     }.toList
   }
 
   def dirty(name: String) = {
-    
   }
 
-  implicit val UserProjectFormat: Format[UserProject] = asProduct4("name", "pseudo", "debug", "dirty")(UserProject.apply)(UserProject.unapply(_).get)
+  implicit val FollowedProjectFormat: Format[FollowedProject] = asProduct3("name", "pseudo", "dirty")(FollowedProject.apply)(FollowedProject.unapply(_).get)
+}
+
+case class DebuggedProject(name: String, pseudo: String) extends MongoDB("projects_dg") {
+  def sessions = Nil
+}
+object DebuggedProject extends MongoDB("projects_dg"){
+
+  /**
+   * Create a new debugged Project.
+   * @return The debugged Project successfully created.
+   */
+  def create(name: String, pseudo: String): DebuggedProject = {
+    val mongoProject = MongoDBObject.newBuilder
+    mongoProject += "name" -> name
+    mongoProject += "pseudo" -> pseudo
+
+    insert(mongoProject.result)
+    DebuggedProject(name, pseudo)
+  }
+
+  /**
+   * Find Projects debugged by user.
+   * @param User's pseudo.
+   * @return Either the founds Debugged Projects, or Nil.
+   */
+  def byUser(pseudo: String): List[DebuggedProject] = {
+    val query = MongoDBObject("pseudo" -> pseudo)
+
+    selectOne(query).map { result =>
+      DebuggedProject(result.getAs[String]("name").get,
+                  result.getAs[String]("pseudo").get)
+    }.toList
+  }
+
+  implicit val DebuggedProjectFormat: Format[DebuggedProject] = asProduct2("name", "pseudo")(DebuggedProject.apply)(DebuggedProject.unapply(_).get)
 }

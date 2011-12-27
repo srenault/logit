@@ -1,0 +1,35 @@
+@(user: User, projects: List[Project])
+
+@main("") {
+<h3>@user.pseudo</h3>
+
+<fieldset>
+  <legend>Available Projects</legend>
+  <form>
+  <input type="text" name="searched" />
+  <button>
+  <ul>
+  @projects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</fieldset>
+
+<fieldset>
+  <legend>Followed Projects</legend>
+  <ul>
+  @user.followedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</fieldset>
+
+<fieldset>
+  <legend>Debugged Projects</legend>
+  <ul>
+  @user.debuggedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</fieldset>
+}

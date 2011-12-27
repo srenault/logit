@@ -19,13 +19,17 @@ object Projects extends Controller {
   /**
    * View all projects.
    */
-  def index() = Action {
-    Ok(views.html.projects.index(User("litig", "", ""), projectForm, Project.list()))
+  def index() = Action { implicit request =>
+    play.Logger.debug("session " + session.get("username"))
+    Application.currentUser.map { u =>
+      Ok(views.html.projects.index(u, projectForm, Project.list()))
+    }.getOrElse(Forbidden)
   }
 
   val projectForm = Form(
     of(
-      "name" -> text
+      "name"      -> text,
+      "token_pub" -> text
     ) 
   )
 
@@ -41,7 +45,7 @@ object Projects extends Controller {
    * @param Project name.
    */
   def project(name: String) = Action {
-    Project.findByName(name).map { project => 
+    Project.byName(name).map { project => 
       Ok(views.html.projects.view(project))
     }.getOrElse(NotFound)
   }
@@ -55,7 +59,7 @@ object Projects extends Controller {
       errors => BadRequest,
       {
         case (projectName, log) =>
-           Project.findByName(name).map { project =>
+           Project.byName(name).map { project =>
              project.addUpLog(log)
            }.getOrElse {
              val newProject = Project(name)

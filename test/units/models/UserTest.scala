@@ -36,19 +36,19 @@ object UserTest extends Specification {
       }
     }
 
-    "follow a projects" in {
+    "follow a prod projects" in {
       withApplication(Nil, MockData.dataSource) {
         User("litig", "sre@zenexity.com", "pwd").followProject("COOL")
       }
     }
 
-    "retrieve followed projects" in {
+    "retrieve followed prod projects" in {
       withApplication(Nil, MockData.dataSource) {
         User("litig", "sre@zenexity.com", "pwd").followedProjects must equalTo (List(UserProject("COOL", "litig")))
       }
     }
 
-    "debug a project" in {
+    "debug any projects" in {
       withApplication(Nil, MockData.dataSource) {
         User("litig", "sre@zenexity.com", "pwd").debugProject("COOL_DEBUG")
       }

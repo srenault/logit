@@ -3,23 +3,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TITLE @title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logit.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/header.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/navigation.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/footer.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/project/projects.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/project/logs.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.6.4.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/project.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/projects.js")" type="text/javascript"></script>
+        <title>@title</title>
     </head>
-    <header class="header">
-      <p>HEADER<p>
-    </header>
     <body>
+    <header class="header">
+      <ul class="menu">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Monitoring</a></li>
+        <li><a href="#">Debugging</a></li>
+        <li><a href="#">Profil</a></li>
+      </ul>
+    </header> 
+    <section class="page">
         @content
+    </section>
     </body>
     <footer class="footer">
       <p>FOOTER</p>

@@ -10,7 +10,7 @@ object Logs extends Controller {
    * Create a log entry.
    */
   def create(projectName: String, log: String) = Action {
-    Project.findByName(projectName).map { project =>
+    Project.byName(projectName).map { project =>
       project.addUpLog(log)
     }.getOrElse {
       val newProject = Project(projectName)

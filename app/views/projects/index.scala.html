@@ -1,34 +1,14 @@
-@(user: User, projectForm: Form[String], projects: List[Project])
+@(user: User, projectForm: Form[(String, String)], projects: List[Project])
 
 @main("") {
 <section class="projects">
 <fieldset>
-  <legend>Available projects</legend>
+  <legend>Monitor available projects</legend>
   <ul>
-  @projects.filter(p => !user.followedProjects.find(pu => pu.name == p.name)).map { project =>
+  @projects.map { project =>
      <li><a href="projects/@project.name">@project.name</a></li>
   }
   </ul>
-</section>
 </fieldset>
-
-<fieldset>
-  <legend>Followed projects</legend>
-  <ul>
-  @user.followedProjects.map { project =>
-     <li><a href="projects/@project.name">@project.name</a></li>
-  }
-  </ul>
 </section>
-</fieldset>
-
-<fieldset>
-  <legend>Debugged projects</legend>
-  <ul>
-  @user.debuggedProjects.map { project =>
-     <li><a href="projects/@project.name">@project.name</a></li>
-  }
-  </ul>
-</section>
-</fieldset>
 }

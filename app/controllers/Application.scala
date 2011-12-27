@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.mvc.Security
 import play.api.data._
 import format.Formats._
 import validation.Constraints._
@@ -9,6 +10,14 @@ import validation.Constraints._
 import models.{User, Project}
 
 object Application extends Controller {
+
+  def currentUser(implicit request: RequestHeader): Option[User] = {
+    play.Logger.debug("security" + Security.username)
+    session.get(Security.username).map { pseudo =>
+      play.Logger.debug("security" + pseudo)
+      User.byPseudo(pseudo)
+    }.getOrElse(None)
+  }
 
   /**
    * Home page.
@@ -48,7 +57,8 @@ object Application extends Controller {
       {
         case (pseudo, password) => 
           User.authenticate(pseudo, password).map { u =>
-            Redirect(routes.Projects.index())
+            play.Logger.debug("Authentication successful. Redirecting to user home page...")
+            Redirect(routes.Users.index()).withSession(session + (Security.username -> u.pseudo))
           }.getOrElse{
             Redirect(routes.Application.index())
           }

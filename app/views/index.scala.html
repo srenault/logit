@@ -1,48 +1,53 @@
 @(signupForm: Form[models.User])
 
-@main("") {
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+      <fieldset class="signin">
+        <legend>Sign In</legend>
+        <form action="@routes.Application.signin()" method="POST">
+          <label>Pseudo   <input type="text" name="pseudo" required /></label>
+          <label>Password <input type="password" name="password" required /></label>
+          <button>Sign In</button>
+        </form>
+      </fieldset>
 
-<fieldset class="signin">
-<legend>Sign In</legend>
-  <form action="@routes.Application.signin()" method="POST">
-    <label>Pseudo   <input type="text" name="pseudo" required /></label>
-    <label>Password <input type="password" name="password" required /></label>
-    <button>Sign In</button>
-  </form>
-</fieldset>
+      <fieldset class="signup">
+        <legend>Sign Up</legend>
+        <form action="@routes.Application.signup()" method="POST">
 
-<fieldset class="signup">
-<legend>Sign Up</legend>
-  <form action="@routes.Application.signup()" method="POST">
+          @signupForm.forField("pseudo") { field =>
+          <label>Pseudo <input type="text" name="@field.name" value="@field.value" /></label>
+          <ul class="errors">
+            @field.error.map { error =>
+            <li>@error</li>
+            }
+          </ul>
+          }
 
-    @signupForm.forField("pseudo") { field =>
-    <label>Pseudo <input type="text" name="@field.name" value="@field.value" /></label>
-      <ul class="errors">
-        @field.error.map { error =>
-        <li>@error</li>
-        }
-      </ul>
-    }
+          @signupForm.forField("email") { field =>
+          <label>Email <input type="email" name="@field.name" value="@field.value" /></label>
+          <ul class="errors">
+            @field.error.map { error =>
+            <li>@error</li>
+            }
+          </ul>
+          }
 
-    @signupForm.forField("email") { field =>
-    <label>Email <input type="email" name="@field.name" value="@field.value" /></label>
-    <ul class="errors">
-      @field.error.map { error =>
-      <li>@error</li>
-      }
-    </ul>
-    }
+          @signupForm.forField("password") { field =>
+          <label>Password <input type="password" name="@field.name" value="@field.value" /></label>
+          <ul class="errors">
+            @field.error.map { error =>
+            <li>@error</li>
+            }
+          </ul>
+          }
 
-    @signupForm.forField("password") { field =>
-    <label>Password <input type="password" name="@field.name" value="@field.value" /></label>
-    <ul class="errors">
-      @field.error.map { error =>
-      <li>@error</li>
-      }
-    </ul>
-    }
-
-    <button>Sign Up</button>
-  </form>
-</fieldset>
-}
+          <button>Sign Up</button>
+        </form>
+      </fieldset>
+    </body>
+</html>

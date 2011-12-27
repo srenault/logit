@@ -14,25 +14,33 @@ case class User(pseudo: String, email: String, password: String) {
    * Create a debug Project.
    * @return List of followed Projects.
    */
-  def debugProject(projectName: String) = UserProject.create(UserProject(projectName, pseudo, true))
+  def debugProject(projectName: String) = DebuggedProject.create(projectName, pseudo)
 
   /**
    * Followed Projects by user.
    * @return List of followed Projects.
    */
-  def followProject(projectName: String) = UserProject.create(UserProject(projectName, pseudo))
+  def followProject(projectName: String) = FollowedProject.create(projectName, pseudo)
 
   /**
    * Followed Projects by user.
    * @return List of followed Projects.
    */
-  def followedProjects: List[UserProject] = UserProject.byUser(pseudo, false)
+  def followedProjects: List[FollowedProject] = FollowedProject.byUser(pseudo)
 
   /**
    * Debugged Projects by user.
    * @return List of debugged Projects.
    */
-  def debuggedProjects: List[UserProject] = UserProject.byUser(pseudo, true)
+  def debuggedProjects: List[DebuggedProject] = DebuggedProject.byUser(pseudo)
+
+  /**
+   * Getting the user diggest.
+   * @return Digest.
+   */
+  def logsDigest: List[FollowedLog] = Nil
+
+  def favouriteLogs: List[Log] = Nil
 }
 
 object User extends MongoDB("users") {
@@ -46,7 +54,6 @@ object User extends MongoDB("users") {
   def authenticate(pseudo: String, password: String): Option[User] = {
     val query  = MongoDBObject("pseudo"   -> pseudo,
                                "password" -> password)
-
     val result = selectOne(query)
     (for { 
       r <- result
@@ -76,7 +83,7 @@ object User extends MongoDB("users") {
    * @param User's pseudo.
    * @return Either the found User, or None.
    */
-  def findByPseudo(pseudo: String): Option[User] = {
+  def byPseudo(pseudo: String): Option[User] = {
     val query  = MongoDBObject("pseudo" -> pseudo)
     val result = selectOne(query)
     

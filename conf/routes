@@ -15,6 +15,7 @@ GET     /projects/:name                               controllers.Projects.proje
 GET     /projects/:name/logs                          controllers.Projects.logs(name)
 POST    /projects/:name/logs                          controllers.Projects.addUpLog(name)
 
+GET     /dashboard                                    controllers.Users.index()
 GET     /users/:pseudo/projects/all                   controllers.Users.projects(pseudo)
 POST    /users/:pseudo/projects/:name/follow          controllers.Users.follow(pseudo, name)
 GET     /users/:pseudo/projects/:name                 controllers.Users.project(pseudo, name)
