@@ -1,17 +1,13 @@
 package models
 
 import play.Logger
-  
+import play.api.libs.json._
+
 import com.mongodb.casbah.Imports._
-import sjson.json._
-import DefaultProtocol._
-import JsonSerialization._
-import dispatch.json._
 
 import db.MongoDB
 
-case class Project(name: String, debug: Boolean = false) extends MongoDB("projects") {
-
+case class Project(name: String) extends MongoDB("projects") {
   /**
    * List logs' project.
    * @return Logs' project.
@@ -22,13 +18,12 @@ case class Project(name: String, debug: Boolean = false) extends MongoDB("projec
    * @return The Log successfully added.
    * @param A new log.
    */
-  def addUpLog(log: String): Option[Log] = {
-    Log.create(Log(name, JsValue.fromString(log)))
+  def addUpLog(log: JsObject): Option[Log] = {
+    Log.create(Log(name, log))
   }
 }
 
 object Project extends MongoDB("projects") {
-
   /**
    * Create a new Project.
    * @return The Project successfully created.
@@ -36,8 +31,6 @@ object Project extends MongoDB("projects") {
   def create(project: Project): Project = {
     val mongoProject = MongoDBObject.newBuilder
     mongoProject += "name" -> project.name
-    mongoProject += "debug" -> project.debug
-
     insert(mongoProject.result)
     project
   }
@@ -50,8 +43,9 @@ object Project extends MongoDB("projects") {
   def byName(name: String): Option[Project] = {
     val query = MongoDBObject("name" -> name)
     selectOne(query).flatMap { result =>
-      Some(Project(result.getAs[String]("name").get,
-                   result.getAs[Boolean]("debug").get))
+      for {
+        name <- result.getAs[String]("name")
+      } yield(Project(name))
     }.orElse(None)
   }
 
@@ -61,12 +55,21 @@ object Project extends MongoDB("projects") {
    */
   def list(): List[Project] = {
     selectAll().map { result =>
-      Project(result.getAs[String]("name").get,
-              result.getAs[Boolean]("debug").get)
-    }.toList
+      for { 
+        name <- result.getAs[String]("name")
+      } yield(Project(name))
+    }.toList.filter(p => p.isDefined).map(p => p.get)
   }
 
-  implicit val ProjectFormat: Format[Project] = asProduct2("name", "debug")(Project.apply)(Project.unapply(_).get)
+  implicit object ProjectFormat extends Format[Project] {
+    def reads(json: JsValue): Project = Project(
+      (json \ "name").as[String]
+    )
+
+    def writes(project: Project): JsValue = JsObject(Map(
+      "project" -> JsString(project.name)
+    ))
+  }
 }
 
 case class FollowedProject(name: String, pseudo: String, dirty: Boolean = false) extends MongoDB("projects_fw") {
@@ -103,10 +106,19 @@ object FollowedProject extends MongoDB("projects_fw"){
     }.toList
   }
 
-  def dirty(name: String) = {
-  }
+  implicit object FollowedProjectFormat extends Format[FollowedProject] {
+    def reads(json: JsValue): FollowedProject = FollowedProject(
+      (json \ "name").as[String],
+      (json \ "pseudo").as[String],
+      (json \ "dirty").as[Boolean]
+    )
 
-  implicit val FollowedProjectFormat: Format[FollowedProject] = asProduct3("name", "pseudo", "dirty")(FollowedProject.apply)(FollowedProject.unapply(_).get)
+    def writes(project: FollowedProject): JsValue = JsObject(Map(
+      "project" -> JsString(project.name),
+      "pseudo" -> JsString(project.pseudo),
+      "dirty"  -> JsBoolean(project.dirty)
+    ))
+  }
 }
 
 case class DebuggedProject(name: String, pseudo: String) extends MongoDB("projects_dg") {
@@ -141,5 +153,15 @@ object DebuggedProject extends MongoDB("projects_dg"){
     }.toList
   }
 
-  implicit val DebuggedProjectFormat: Format[DebuggedProject] = asProduct2("name", "pseudo")(DebuggedProject.apply)(DebuggedProject.unapply(_).get)
+  implicit object DebuggedProjectFormat extends Format[DebuggedProject] {
+    def reads(json: JsValue): DebuggedProject = DebuggedProject(
+      (json \ "name").as[String],
+      (json \ "pseudo").as[String]
+    )
+
+    def writes(project: DebuggedProject): JsValue = JsObject(Map(
+      "project" -> JsString(project.name),
+      "pseudo" -> JsString(project.pseudo)
+    ))
+  }
 }

@@ -1,14 +1,9 @@
 package models
 
 import play.Logger
+import play.api.libs.json._
 
 import com.mongodb.casbah.Imports._
-import scala.util.parsing.json._
-
-import sjson.json._
-import DefaultProtocol._
-import JsonSerialization._
-import dispatch.json._
 
 import db.MongoDB
 
@@ -20,27 +15,12 @@ object LogTime {
 /**
  * Representing a simple log.
  */
-case class Log(projectName: String, dataJSON: String = "{}", receivedAt: Long = LogTime.now) {
+case class Log(projectName: String, dataJSON: JsObject, receivedAt: Long = LogTime.now) {
 
-  /**
-   * Log's data.
-   * @return Mapping key/value matching to a log pattern.
-   */
-  lazy val data: Map[String, Any] = JSON.parseFull(dataJSON) match {
-    case Some(d: Map[String, Any]) => d
-    case _ => Map[String, Any]()
-  }
+  lazy val data: Map[String, JsValue] = dataJSON.as[Map[String, JsValue]]
 }
 
-/**************************/
-/* A simple Log           */
-/*************************/
 object Log extends MongoDB("logs") {
-
-  def apply(projectName: String, dataJSON: JsValue, receivedAt: Long = LogTime.now): Log = {
-    Log(projectName, dataJSON.toString, receivedAt)
-  }
-
   /**
    * Create a new Log.
    * @param A new log.
@@ -49,16 +29,11 @@ object Log extends MongoDB("logs") {
   def create(log: Log): Option[Log] = {
     val mongoLog = MongoDBObject.newBuilder
     
-    JSON.parseFull(log.dataJSON) match {
-      case Some(d: Map[String, Any]) => {
-        mongoLog ++= d 
-        mongoLog +=  "project" -> log.projectName
-        mongoLog +=  "receivedAt" -> log.receivedAt
-        insert(mongoLog.result)
-        Some(log)
-      }
-      case _ => Logger.warn("Failed to create an log entry"); None
-    }
+    mongoLog ++= log.dataJSON.value
+    mongoLog +=  "project" -> log.projectName
+    mongoLog +=  "receivedAt" -> log.receivedAt
+    insert(mongoLog.result)
+    Some(log)
   }
 
   /**
@@ -71,44 +46,35 @@ object Log extends MongoDB("logs") {
     val results = selectBy(query)
     (for {
       r <- results
-      data <- r.getAs[String]("data")
+      dataJSON <- r.getAs[JsObject]("dataJSON")
       receivedAt <- r.getAs[Long]("receivedAt")
-    } yield(Log(name, data, receivedAt))).toList
+    } yield(Log(name, dataJSON, receivedAt))).toList
   }
 
   implicit object LogFormat extends Format[Log] {
-    def reads(json: JsValue): Log = json match {
-      case JsObject(m) => Log(fromjson[String](m(JsString("project"))),
-                              fromjson[String](m(JsString("data"))),
-                              fromjson[Long](m(JsString("receivedAt"))))
-      case _ => throw new RuntimeException("JsObject expected")
-    }
+    def reads(json: JsValue): Log = Log(
+      (json \ "project").as[String],
+      (json \ "dataJSON") match {
+        case d: JsObject => d
+        case _ => JsObject(Map[String, JsValue]())
+       },
+      (json \ "receivedAt").as[Long])
 
-    def writes(log: Log): JsValue = {
-      JsObject(List(
-        (tojson("project").asInstanceOf[JsString], tojson(log.projectName)),
-        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON)),
-        (tojson("receivedAt").asInstanceOf[JsString], JsValue.fromString(log.receivedAt))
-      ))
-    }
+    def writes(log: Log): JsValue = JsObject(Map(
+      "project" -> JsString(log.projectName),
+      "dataJSON" -> log.dataJSON,
+      "receivedAt" -> JsNumber(log.receivedAt)
+    ))
   }
 }
 
-/**************************/
-/* Followed Log by User.  */
-/*************************/
 case class FollowedLog(projectName: String, 
-                       dataJSON: String = "{}", 
+                       data: JsObject, 
                        read: Boolean, 
                        marked: Boolean,
                        receivedAt: Long = LogTime.now) extends MongoDB("logs_fw")
 
 object FollowedLog extends MongoDB("logs_fw") {
-
-  def apply(projectName: String, dataJSON: JsValue, read: Boolean, marked: Boolean, receivedAt: Long = LogTime.now): FollowedLog = {
-    FollowedLog(projectName, dataJSON.toString, read, marked, receivedAt)
-  }
-
   /**
    * Create a new FollowedLog.
    * @param A new log.
@@ -116,19 +82,13 @@ object FollowedLog extends MongoDB("logs_fw") {
    */
   def create(log: FollowedLog): Option[FollowedLog] = {
     val mongoFollowedLog = MongoDBObject.newBuilder
-    
-    JSON.parseFull(log.dataJSON) match {
-      case Some(d: Map[String, Any]) => {
-        mongoFollowedLog ++= d 
-        mongoFollowedLog +=  "project"    -> log.projectName
-        mongoFollowedLog +=  "read"       -> log.read
-        mongoFollowedLog +=  "marked"     -> log.marked
-        mongoFollowedLog +=  "receivedAt" -> log.receivedAt
-        insert(mongoFollowedLog.result)
-        Some(log)
-      }
-      case _ => Logger.warn("Failed to create an log entry"); None
-    }
+    mongoFollowedLog ++= log.data.value
+    mongoFollowedLog +=  "project"    -> log.projectName
+    mongoFollowedLog +=  "read"       -> log.read
+    mongoFollowedLog +=  "marked"     -> log.marked
+    mongoFollowedLog +=  "receivedAt" -> log.receivedAt
+    insert(mongoFollowedLog.result)
+    Some(log)
   }
 
   /**
@@ -141,7 +101,7 @@ object FollowedLog extends MongoDB("logs_fw") {
     val results = selectBy(query)
     (for {
       r          <- results
-      data       <- r.getAs[String]("data")
+      data       <- r.getAs[JsObject]("data")
       read       <- r.getAs[Boolean]("read")
       marked     <- r.getAs[Boolean]("marked")
       receivedAt <- r.getAs[Long]("receivedAt")
@@ -149,44 +109,34 @@ object FollowedLog extends MongoDB("logs_fw") {
   }
 
   implicit object FollowedLogFormat extends Format[FollowedLog] {
-    def reads(json: JsValue): FollowedLog = json match {
-      case JsObject(m) => FollowedLog(fromjson[String](m(JsString("project"))),
-                                      fromjson[String](m(JsString("data"))),
-                                      fromjson[Boolean](m(JsString("read"))),
-                                      fromjson[Boolean](m(JsString("marked"))),
-                                      fromjson[Long](m(JsString("receivedAt")))
-                                     )
-      case _ => throw new RuntimeException("JsObject expected")
-    }
+    def reads(json: JsValue): FollowedLog = FollowedLog(
+      (json \ "project").as[String],
+      (json \ "data") match {
+        case d: JsObject => d
+        case _ => JsObject(Map[String, JsValue]())
+       },
+      (json \ "read").as[Boolean],
+      (json \ "marked").as[Boolean],
+      (json \ "receivedAt").as[Long])
 
-    def writes(log: FollowedLog): JsValue = {
-      JsObject(List(
-        (tojson("project").asInstanceOf[JsString], tojson(log.projectName)),
-        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON)),
-        (tojson("read").asInstanceOf[JsString], tojson(log.read)),
-        (tojson("marked").asInstanceOf[JsString], tojson(log.marked)),
-        (tojson("receivedAt").asInstanceOf[JsString], tojson(log.receiveAt))
-      ))
-    }
+    def writes(log: FollowedLog): JsValue = JsObject(Map(
+      "project" -> JsString(log.projectName),
+      "data" -> log.data,
+      "read" -> JsBoolean(log.read),
+      "marked" -> JsBoolean(log.marked),
+      "receivedAt" -> JsNumber(log.receivedAt)
+    ))
   }
 }
 
-/**************************/
-/* Debugged Log by User. */
-/*************************/
 case class DebuggedLog(projectName: String, 
                        sessionName: String, 
-                       dataJSON: String = "{}", 
+                       data: JsObject, 
                        read: Boolean, 
                        marked: Boolean,
                        receivedAt: Long = LogTime.now) extends MongoDB("logs_db")
 
 object DebuggedLog extends MongoDB("logs_db") {
-
-  def apply(projectName: String, sessionName: String, dataJSON: JsValue, read: Boolean, marked: Boolean, receivedAt: Long = LogTime.now): DebuggedLog = {
-    DebuggedLog(projectName, sessionName, dataJSON.toString, read, marked, receivedAt)
-  }
-
   /**
    * Create a new DebuggedLog.
    * @param A new log.
@@ -194,20 +144,14 @@ object DebuggedLog extends MongoDB("logs_db") {
    */
   def create(log: DebuggedLog): Option[DebuggedLog] = {
     val mongoDebuggedLog = MongoDBObject.newBuilder
-    
-    JSON.parseFull(log.dataJSON) match {
-      case Some(d: Map[String, Any]) => {
-        mongoDebuggedLog ++= d 
-        mongoDebuggedLog +=  "project" -> log.projectName
-        mongoDebuggedLog +=  "session" -> log.sessionName
-        mongoDebuggedLog +=  "read"    -> log.read
-        mongoDebuggedLog +=  "marked"  -> log.marked
-        mongoDebuggedLog +=  "receivedAt"  -> log.receivedAt
-        insert(mongoDebuggedLog.result)
-        Some(log)
-      }
-      case _ => Logger.warn("Failed to create an log entry"); None
-    }
+    mongoDebuggedLog ++= log.data.value
+    mongoDebuggedLog +=  "project" -> log.projectName
+    mongoDebuggedLog +=  "session" -> log.sessionName
+    mongoDebuggedLog +=  "read"    -> log.read
+    mongoDebuggedLog +=  "marked"  -> log.marked
+    mongoDebuggedLog +=  "receivedAt"  -> log.receivedAt
+    insert(mongoDebuggedLog.result)
+    Some(log)
   }
 
   /**
@@ -222,7 +166,7 @@ object DebuggedLog extends MongoDB("logs_db") {
     val results = selectBy(query)
     (for {
       r          <- results
-      data       <- r.getAs[String]("data")
+      data       <- r.getAs[JsObject]("data")
       read       <- r.getAs[Boolean]("read")
       marked     <- r.getAs[Boolean]("marked")
       receivedAt <- r.getAs[Long]("receivedAt")
@@ -230,27 +174,25 @@ object DebuggedLog extends MongoDB("logs_db") {
   }
 
   implicit object DebuggedLogFormat extends Format[DebuggedLog] {
-    def reads(json: JsValue): DebuggedLog = json match {
-      case JsObject(m) => DebuggedLog(fromjson[String](m(JsString("project"))),
-                                      fromjson[String](m(JsString("session"))),
-                                      fromjson[String](m(JsString("data"))),
-                                      fromjson[Boolean](m(JsString("read"))),
-                                      fromjson[Boolean](m(JsString("marked"))),
-                                      fromjson[Long](m(JsString("receivedAt")))
-                                     )
-      case _ => throw new RuntimeException("JsObject expected")
-    }
+    def reads(json: JsValue): DebuggedLog = DebuggedLog(
+      (json \ "project").as[String],
+      (json \ "session").as[String],
+      (json \ "data") match {
+        case d: JsObject => d
+        case _ => JsObject(Map[String, JsValue]())
+       },
+      (json \ "read").as[Boolean],
+      (json \ "marked").as[Boolean],
+      (json \ "receivedAt").as[Long])
 
-    def writes(log: DebuggedLog): JsValue = {
-      JsObject(List(
-        (tojson("project").asInstanceOf[JsString], tojson(log.projectName)),
-        (tojson("session").asInstanceOf[JsString], tojson(log.sessionName)),
-        (tojson("data").asInstanceOf[JsString], JsValue.fromString(log.dataJSON)),
-        (tojson("read").asInstanceOf[JsString], tojson(log.read)),
-        (tojson("marked").asInstanceOf[JsString], tojson(log.marked)),
-        (tojson("receivedAt").asInstanceOf[JsString], tojson(log.receivedAt))
-      ))
-    }
+    def writes(log: DebuggedLog): JsValue = JsObject(Map(
+      "project" -> JsString(log.projectName),
+      "session" -> JsString(log.sessionName),
+      "data" -> log.data,
+      "read" -> JsBoolean(log.read),
+      "marked" -> JsBoolean(log.marked),
+      "receivedAt" -> JsNumber(log.receivedAt)
+    ))
   }
 }
 

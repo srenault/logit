@@ -37,7 +37,7 @@ object Projects extends Controller {
    * Return all projects in json format.
    */
   def projects() = Action {
-    Ok(tojson(Project.list()).toString)
+    Ok//(tojson(Project.list()).toString)
   }
 
   /**
@@ -60,11 +60,11 @@ object Projects extends Controller {
       {
         case (projectName, log) =>
            Project.byName(name).map { project =>
-             project.addUpLog(log)
+             //project.addUpLog(log)
            }.getOrElse {
              val newProject = Project(name)
              Project.create(newProject)
-             newProject.addUpLog(log)
+             //newProject.addUpLog(log)
            }
         Created
       })
@@ -82,6 +82,6 @@ object Projects extends Controller {
    * @param Project name.
    */
   def logs(name: String) = Action {    
-    Ok(tojson(Project(name).logs).toString)
+    Ok//(tojson(Project(name).logs).toString)
   }
 }
