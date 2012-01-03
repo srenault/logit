@@ -8,6 +8,7 @@ import format.Formats._
 import validation.Constraints._
 
 import models.{User, Project}
+import controllers.users._
 
 object Application extends Controller {
 
@@ -23,6 +24,7 @@ object Application extends Controller {
    * Home page.
    */
   def index() = Action {
+//    play.Logger.debug("routes " + routes)
     Ok(views.html.index(signupForm))
   }
 
@@ -58,9 +60,9 @@ object Application extends Controller {
         case (pseudo, password) => 
           User.authenticate(pseudo, password).map { u =>
             play.Logger.debug("Authentication successful. Redirecting to user home page...")
-            Redirect(routes.Users.index()).withSession(session + (Security.username -> u.pseudo))
+            Redirect("/dashboard").withSession(session + (Security.username -> u.pseudo)) //TODO
           }.getOrElse{
-            Redirect(routes.Application.index())
+            Redirect("/dashboard")//routes.Users.indexroutes.Application.index())
           }
       })
   }

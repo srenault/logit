@@ -20,7 +20,6 @@ object Projects extends Controller {
    * View all projects.
    */
   def index() = Action { implicit request =>
-    play.Logger.debug("session " + session.get("username"))
     Application.currentUser.map { u =>
       Ok(views.html.projects.index(u, projectForm, Project.list()))
     }.getOrElse(Forbidden)

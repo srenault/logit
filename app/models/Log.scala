@@ -186,11 +186,11 @@ object DebuggedLog extends MongoDB("logs_db") {
       (json \ "receivedAt").as[Long])
 
     def writes(log: DebuggedLog): JsValue = JsObject(Map(
-      "project" -> JsString(log.projectName),
-      "session" -> JsString(log.sessionName),
-      "data" -> log.data,
-      "read" -> JsBoolean(log.read),
-      "marked" -> JsBoolean(log.marked),
+      "project"    -> JsString(log.projectName),
+      "session"    -> JsString(log.sessionName),
+      "data"       -> log.data,
+      "read"       -> JsBoolean(log.read),
+      "marked"     -> JsBoolean(log.marked),
       "receivedAt" -> JsNumber(log.receivedAt)
     ))
   }
