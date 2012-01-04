@@ -2,20 +2,21 @@ package controllers.users.projects
 
 import play.api._
 import play.api.mvc._
-import play.api.mvc.Security._
 
-object Followed extends Controller {
+import utils.SessionUtils
+import models.User
+
+object Followed extends Controller with SessionUtils {
 
   /**
    * Retrieve all projects that current user follow.
    * @param User's pseudo.
    */
-  def list(pseudo: String) = {
-    Authenticated { _ =>
-      Action {
-        Ok
-      }
-    }
+  def list(pseudo: String) = Action { implicit request =>
+    CurrentUser(
+      user => Ok,
+      Forbidden
+    )
   }
 
   /**
@@ -50,19 +51,17 @@ object Followed extends Controller {
 object Debugged extends Controller {
 
   /**
-   * Retrieve all projects that current user follow.
+   * Retrieve all projects that current user debugs.
    * @param User's pseudo.
    */
   def list(pseudo: String) = {
-    Authenticated { _ =>
-      Action {
-        Ok
-      }
+    Action {
+      Ok
     }
   }
 
   /**
-   * Retrieve one specific project that current user follows.
+   * Retrieve one specific project that current user debugs.
    * @param User's pseudo.
    * @param Project name.
    */

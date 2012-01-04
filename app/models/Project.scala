@@ -66,8 +66,8 @@ object Project extends MongoDB("projects") {
       (json \ "name").as[String]
     )
 
-    def writes(project: Project): JsValue = JsObject(Map(
-      "project" -> JsString(project.name)
+    def writes(project: Project): JsValue = JsObject(Seq(
+      ("project" -> JsString(project.name))
     ))
   }
 }
@@ -113,10 +113,10 @@ object FollowedProject extends MongoDB("projects_fw"){
       (json \ "dirty").as[Boolean]
     )
 
-    def writes(project: FollowedProject): JsValue = JsObject(Map(
-      "project" -> JsString(project.name),
-      "pseudo" -> JsString(project.pseudo),
-      "dirty"  -> JsBoolean(project.dirty)
+    def writes(project: FollowedProject): JsValue = JsObject(Seq(
+      ("project" -> JsString(project.name)),
+      ("pseudo" -> JsString(project.pseudo)),
+      ("dirty"  -> JsBoolean(project.dirty))
     ))
   }
 }
@@ -159,9 +159,9 @@ object DebuggedProject extends MongoDB("projects_dg"){
       (json \ "pseudo").as[String]
     )
 
-    def writes(project: DebuggedProject): JsValue = JsObject(Map(
-      "project" -> JsString(project.name),
-      "pseudo" -> JsString(project.pseudo)
+    def writes(project: DebuggedProject): JsValue = JsObject(Seq(
+      ("project" -> JsString(project.name)),
+      ("pseudo" -> JsString(project.pseudo))
     ))
   }
 }

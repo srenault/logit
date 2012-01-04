@@ -30,7 +30,7 @@ object MongoDB {
   val DB_NAME = "logIt"
   
   lazy val db = {
-    val config   = Configuration.fromFile(Play.getFile("conf/application.conf"))
+    val config   = Configuration.load()
     val host     = config.getString("mongo.host").get
     val port     = config.getInt("mongo.port").get
     val dbName   = config.getString("mongo.db").get

@@ -12,19 +12,10 @@ import controllers.users._
 
 object Application extends Controller {
 
-  def currentUser(implicit request: RequestHeader): Option[User] = {
-    play.Logger.debug("security" + Security.username)
-    session.get(Security.username).map { pseudo =>
-      play.Logger.debug("security" + pseudo)
-      User.byPseudo(pseudo)
-    }.getOrElse(None)
-  }
-
   /**
    * Home page.
    */
   def index() = Action {
-//    play.Logger.debug("routes " + routes)
     Ok(views.html.index(signupForm))
   }
 

@@ -7,22 +7,19 @@ import play.api.data._
 import format.Formats._
 import validation.Constraints._
 
-
-import sjson.json._
-import DefaultProtocol._
-import JsonSerialization._
-  
 import models.{Project, Log, User}
+import utils._
 
-object Projects extends Controller {
+object Projects extends Controller with SessionUtils {
 
   /**
    * View all projects.
    */
   def index() = Action { implicit request =>
-    Application.currentUser.map { u =>
-      Ok(views.html.projects.index(u, projectForm, Project.list()))
-    }.getOrElse(Forbidden)
+    CurrentUser(
+      user => Ok(views.html.projects.index(user, projectForm, Project.list())),
+      Forbidden
+    )
   }
 
   val projectForm = Form(

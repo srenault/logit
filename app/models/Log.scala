@@ -56,14 +56,14 @@ object Log extends MongoDB("logs") {
       (json \ "project").as[String],
       (json \ "dataJSON") match {
         case d: JsObject => d
-        case _ => JsObject(Map[String, JsValue]())
+        case _ => JsObject(Seq[(String, JsValue)]())
        },
       (json \ "receivedAt").as[Long])
 
-    def writes(log: Log): JsValue = JsObject(Map(
-      "project" -> JsString(log.projectName),
-      "dataJSON" -> log.dataJSON,
-      "receivedAt" -> JsNumber(log.receivedAt)
+    def writes(log: Log): JsValue = JsObject(Seq(
+      ("project" -> JsString(log.projectName)),
+      ("dataJSON" -> log.dataJSON),
+      ("receivedAt" -> JsNumber(log.receivedAt))
     ))
   }
 }
@@ -113,18 +113,18 @@ object FollowedLog extends MongoDB("logs_fw") {
       (json \ "project").as[String],
       (json \ "data") match {
         case d: JsObject => d
-        case _ => JsObject(Map[String, JsValue]())
+        case _ => JsObject(Seq[(String, JsValue)]())
        },
       (json \ "read").as[Boolean],
       (json \ "marked").as[Boolean],
       (json \ "receivedAt").as[Long])
 
-    def writes(log: FollowedLog): JsValue = JsObject(Map(
-      "project" -> JsString(log.projectName),
-      "data" -> log.data,
-      "read" -> JsBoolean(log.read),
-      "marked" -> JsBoolean(log.marked),
-      "receivedAt" -> JsNumber(log.receivedAt)
+    def writes(log: FollowedLog): JsValue = JsObject(Seq(
+      ("project" -> JsString(log.projectName)),
+      ("data" -> log.data),
+      ("read" -> JsBoolean(log.read)),
+      ("marked" -> JsBoolean(log.marked)),
+      ("receivedAt" -> JsNumber(log.receivedAt))
     ))
   }
 }
@@ -179,19 +179,19 @@ object DebuggedLog extends MongoDB("logs_db") {
       (json \ "session").as[String],
       (json \ "data") match {
         case d: JsObject => d
-        case _ => JsObject(Map[String, JsValue]())
+        case _ => JsObject(Seq[(String, JsValue)]())
        },
       (json \ "read").as[Boolean],
       (json \ "marked").as[Boolean],
       (json \ "receivedAt").as[Long])
 
-    def writes(log: DebuggedLog): JsValue = JsObject(Map(
-      "project"    -> JsString(log.projectName),
-      "session"    -> JsString(log.sessionName),
-      "data"       -> log.data,
-      "read"       -> JsBoolean(log.read),
-      "marked"     -> JsBoolean(log.marked),
-      "receivedAt" -> JsNumber(log.receivedAt)
+    def writes(log: DebuggedLog): JsValue = JsObject(Seq(
+      ("project"    -> JsString(log.projectName)),
+      ("session"    -> JsString(log.sessionName)),
+      ("data"       -> log.data),
+      ("read"       -> JsBoolean(log.read)),
+      ("marked"     -> JsBoolean(log.marked)),
+      ("receivedAt" -> JsNumber(log.receivedAt))
     ))
   }
 }
