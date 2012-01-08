@@ -1,0 +1,19 @@
+@(user: User)
+
+<!--helper.javascriptRouter("jsRoutes")(
+routes.javascript.Application.say
+)-->
+
+
+@main("") {
+<div>
+<button>Start</button>
+<button>Stop</button>
+</div>
+
+<fieldset>
+  <legend>Arriving logs</legend>
+  <iframe src="/users/@user.pseudo/projects/db/NOWT!FY/start">
+  </iframe>
+</fieldset>
+}

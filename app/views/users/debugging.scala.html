@@ -1,15 +1,12 @@
 @(user: User)
 
 @main("") {
-<section class="projects">
 <fieldset>
-  <legend>Followed projects</legend>
-  <ul>
-  @user.followedProjects.map { project =>
-     <li><a href="projects/@project.name">@project.name</a></li>
-  }
-  </ul>
-</section>
+  <legend>Debug a new Project</legend>
+  <form action="@routes.Application.signin()" method="POST">
+    <label>give me its name: <input type="text" name="name" required /></label>
+    <button>Create</button>
+  </form>
 </fieldset>
 
 <fieldset>
@@ -19,6 +16,14 @@
      <li><a href="projects/@project.name">@project.name</a></li>
   }
   </ul>
-</section>
+</fieldset>
+
+<fieldset>
+  <legend>Debugging sessions</legend>
+  <ul>
+     <li><a href="">session #1</a></li>
+     <li><a href="">session #2</a></li>
+  </ul>
+  <button>Start a new Session</button>
 </fieldset>
 }

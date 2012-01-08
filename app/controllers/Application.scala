@@ -8,7 +8,6 @@ import format.Formats._
 import validation.Constraints._
 
 import models.{User, Project}
-import controllers.users._
 
 object Application extends Controller {
 
@@ -35,9 +34,9 @@ object Application extends Controller {
   
   val signupForm = Form(
     of(User.apply _, User.unapply _) (
-      "pseudo"   -> of[String].verifying(required),
-      "email"    -> of[String].verifying(required),
-      "password" -> of[String].verifying(required)
+      "pseudo"   -> of[String].verifying(nonEmpty),
+      "email"    -> of[String].verifying(nonEmpty),
+      "password" -> of[String].verifying(nonEmpty)
     )
   )
 
@@ -50,10 +49,12 @@ object Application extends Controller {
       {
         case (pseudo, password) => 
           User.authenticate(pseudo, password).map { u =>
-            play.Logger.debug("Authentication successful. Redirecting to user home page...")
-            Redirect("/dashboard").withSession(session + (Security.username -> u.pseudo)) //TODO
+            play.Logger.info("Authentication successful.")
+            Redirect("/dashboard").withSession(Security.username -> u.pseudo)
+//              Redirect(routes.Users.index()).withSession(Security.username -> u.pseudo)
           }.getOrElse{
-            Redirect("/dashboard")//routes.Users.indexroutes.Application.index())
+            play.Logger.info("Authentication failed...")
+            Redirect(routes.Application.index())
           }
       })
   }

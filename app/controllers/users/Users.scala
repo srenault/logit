@@ -5,19 +5,19 @@ import play.api.mvc._
 import play.api.mvc.Security._
 
 import models.Project
+import utils.SessionUtils
 
-object Users extends Controller {
+object Users extends Controller with SessionUtils {
 
   /**
    * User's dashboard.
    * @param User's pseudo.
    */
-  def index() = {
-    Authenticated { _ =>
-      Action {
-          Ok
-      }
-    }
+  def index() = Action { implicit request =>
+    CurrentUser(
+      user => Ok(views.html.users.index(user)),
+      Forbidden
+    )
   }
 
   /**

@@ -1,0 +1,21 @@
+@(user: User)
+
+@main("") {
+<h3>What's up !?</h3>
+<fieldset>
+  <legend>Followed Projects</legend>
+  <ul>
+  @user.followedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</fieldset>
+<fieldset>
+  <legend>Debugged Projects</legend>
+  <ul>
+  @user.debuggedProjects.map { project =>
+     <li><a href="projects/@project.name">@project.name</a></li>
+  }
+  </ul>
+</fieldset>
+}

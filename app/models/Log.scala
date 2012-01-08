@@ -132,8 +132,8 @@ object FollowedLog extends MongoDB("logs_fw") {
 case class DebuggedLog(projectName: String, 
                        sessionName: String, 
                        data: JsObject, 
-                       read: Boolean, 
-                       marked: Boolean,
+                       read: Boolean = false, 
+                       marked: Boolean = false,
                        receivedAt: Long = LogTime.now) extends MongoDB("logs_db")
 
 object DebuggedLog extends MongoDB("logs_db") {
