@@ -3,8 +3,6 @@
 <!--helper.javascriptRouter("jsRoutes")(
 routes.javascript.Application.say
 )-->
-
-
 @main("") {
 <div>
 <button>Start</button>
@@ -16,4 +14,12 @@ routes.javascript.Application.say
   <iframe src="/users/@user.pseudo/projects/db/NOWT!FY/start">
   </iframe>
 </fieldset>
+
+<script>
+  function trace(data) {
+      console.log("receive a log");
+      console.log(data);
+  }
+  alert("hey");
+</script>
 }
