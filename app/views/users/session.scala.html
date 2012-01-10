@@ -20,10 +20,10 @@ routes.javascript.Application.say
 
 <script>
   function trace(log) {
-      console.log("receive a log: " + log);
+      console.log(log);
 
       var projectName = _.template('<%= project %>');
-      $('#logs').append('<li>'+projectName(data)+'</li>');
+      $('#logs').append('<li>'+projectName(log)+'</li>');
   }
 </script>
 }

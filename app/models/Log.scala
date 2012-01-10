@@ -173,7 +173,7 @@ object DebuggedLog extends MongoDB("logs_db") {
     } yield(DebuggedLog(projectName, sessionName, data, read, marked))).toList
   }
 
-  implicit object DebuggedLogFormat extends Format[DebuggedLog] {
+/*  implicit object DebuggedLogFormat extends Format[DebuggedLog] {
     def reads(json: JsValue): DebuggedLog = DebuggedLog(
       (json \ "project").as[String],
       (json \ "session").as[String],
@@ -193,7 +193,9 @@ object DebuggedLog extends MongoDB("logs_db") {
       ("marked"     -> JsBoolean(log.marked)),
       ("receivedAt" -> JsNumber(log.receivedAt))
     ))
-  }
+  }*/
+  import play.api.libs.json.Generic._
+  implicit val DebuggedLogFormat: Format[DebuggedLog] = productFormat6("project", "session", "data", "read", "marked", "receivedAt")(DebuggedLog.apply)(DebuggedLog.unapply(_).get)
 }
 
 case class DebbuggedSession(projectName: String, startTime: Long = LogTime.now, started: Boolean) {
