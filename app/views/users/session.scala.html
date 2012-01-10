@@ -3,6 +3,7 @@
 <!--helper.javascriptRouter("jsRoutes")(
 routes.javascript.Application.say
 )-->
+
 @main("") {
 <div>
 <button>Start</button>
@@ -11,15 +12,18 @@ routes.javascript.Application.say
 
 <fieldset>
   <legend>Arriving logs</legend>
-  <iframe src="/users/@user.pseudo/projects/db/NOWT!FY/start">
+  <ul id="logs"></ul>
+
+  <iframe src="/users/@user.pseudo/projects/db/NOWT!FY/start" style="display: none;">
   </iframe>
 </fieldset>
 
 <script>
-  function trace(data) {
-      console.log("receive a log");
-      console.log(data);
+  function trace(log) {
+      console.log("receive a log: " + log);
+
+      var projectName = _.template('<%= project %>');
+      $('#logs').append('<li>'+projectName(data)+'</li>');
   }
-  alert("hey");
 </script>
 }

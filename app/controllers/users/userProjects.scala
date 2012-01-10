@@ -64,8 +64,11 @@ object Followed extends Controller with SessionUtils {
 
 object Debugged extends Controller with SessionUtils {
   import models.DebuggedLog
+  import models.DebuggedLog._
   import actors.DebugActor
   import actors.DebugActor._
+
+  implicit val DebuggedLogComet = Comet.CometMessage[DebuggedLog](dbLog => toJson(dbLog).toString)
 
   def index(pseudo: String) = Action { implicit request =>
     CurrentUser(
@@ -75,15 +78,16 @@ object Debugged extends Controller with SessionUtils {
   }
 
   def view(pseudo: String, name: String) = Action { implicit request =>
-    CurrentUser(
+    /*CurrentUser(
       user => Ok(views.html.users.session(user)),
       Forbidden
-    )
+    )*/
+    Ok(views.html.users.session(User("sre","password", "sre@zenexity.com")))
   }
 
   def start(pseudo: String, name: String) = Action {
     AsyncResult {
-      (DebugActor.ref ? (Listen(), 5.seconds)).mapTo[Enumerator[String]].asPromise.map { 
+      (DebugActor.ref ? (Listen(), 5.seconds)).mapTo[Enumerator[DebuggedLog]].asPromise.map { 
         chunks => Ok.stream(chunks &> Comet( callback = "window.parent.trace"))
       }
     }
@@ -142,8 +146,8 @@ object Debugged extends Controller with SessionUtils {
   }
 
   def sendlog() = Action {
-    val log = DebuggedLog("NOWT!FY", "#1", JsObject(Seq.empty))
-    DebugActor.ref ! "hy dude!"
+    val log = DebuggedLog("NOWT!FY", "#1", JsObject(Seq("thread" -> JsString("#1"))))
+    DebugActor.ref ! log
     Ok
   }
 }
