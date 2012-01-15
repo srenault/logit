@@ -140,7 +140,7 @@ object DebuggedProject extends MongoDB("projects_dg"){
   }
 
   /**
-   * Find Projects debugged by user.
+   * Find debugged Projects by user.
    * @param User's pseudo.
    * @return Either the founds Debugged Projects, or Nil.
    */

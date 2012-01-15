@@ -195,7 +195,7 @@ object DebuggedLog extends MongoDB("logs_db") {
     ))
   }*/
   import play.api.libs.json.Generic._
-  implicit val DebuggedLogFormat: Format[DebuggedLog] = productFormat6("project", "session", "data", "read", "marked", "receivedAt")(DebuggedLog.apply)(DebuggedLog.unapply(_).get)
+  implicit val DebuggedLogFormat: Format[DebuggedLog] = productFormat6("project", "session", "data", "read", "marked", "receivedAt")(DebuggedLog.apply)(DebuggedLog.unapply(_))
 }
 
 case class DebbuggedSession(projectName: String, startTime: Long = LogTime.now, started: Boolean) {

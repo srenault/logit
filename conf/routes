@@ -34,7 +34,5 @@ GET     /api/users/:pseudo/projects/db/:name/logs/:logID  controllers.users.proj
 GET     /api/users/:pseudo/projects/db/:name/logs         controllers.users.projects.Debugged.logs(pseudo, name)
 POST    /api/users/:pseudo/projects/db/:name/logs         controllers.users.projects.Debugged.eval(pseudo, name)
 
-GET    /sendlog         controllers.users.projects.Debugged.sendlog()
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

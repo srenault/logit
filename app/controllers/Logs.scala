@@ -26,9 +26,3 @@ object Logs extends Controller {
     }
   }
 }
-
-/*object JsonValidator {
-    def JsonValided[A](jsonString: String, onInvalidFormat: _ => Result)(action: JsValue => Action[A]): Action[(Action[A], A)] {
-      
-    }
-}*/

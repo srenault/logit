@@ -13,27 +13,27 @@ class DebugActor extends Actor {
   
   import DebugActor._
   
-  var users = Seq.empty[CallbackEnumerator[DebuggedLog]]
+  var users = Map.empty[String, CallbackEnumerator[DebuggedLog]]
   
   def receive = {
 
-    case Listen() => {
+    case Listen(pseudo) => {
       lazy val channel: CallbackEnumerator[DebuggedLog] = new CallbackEnumerator[DebuggedLog](
-        onComplete = self ! Quit(channel)
+        onComplete = self ! Quit(pseudo)
       )
-      users = users :+ channel
+      users = users + (pseudo -> channel)
       Logger.info("New debugging session")
       sender ! channel
     }
 
-    case Quit(channel) => {
+    case Quit(pseudo) => {
       Logger.info("Debugging session has been stopped ...")
-      users = users.filterNot(_ == channel)
+      users = users.filterNot(c => c._1 == pseudo)
     }
     
-    case l: DebuggedLog => {
-      Logger.info("Got a log : " + l)
-      users.foreach(_.push(l))
+    case NewLog(pseudo, log) => {
+      Logger.info("Got a log : " + log)
+      users.find(u => u._1 == pseudo).map(u => u._2.push(log))
     }
   }
 }
@@ -41,8 +41,9 @@ class DebugActor extends Actor {
 object DebugActor {
 
   trait Event
-  case class Listen() extends Event
-  case class Quit(channel: CallbackEnumerator[DebuggedLog]) extends Event
+  case class Listen(pseudo: String) extends Event
+  case class Quit(pseudo: String) extends Event
+  case class NewLog(pseudo: String, log: DebuggedLog)
   lazy val system = ActorSystem("debugroom")
   lazy val ref = system.actorOf(Props[DebugActor])
 }

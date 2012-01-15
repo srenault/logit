@@ -2,6 +2,8 @@
  <appender name="LOGIT" class="com.zenexity.logit.appender.LogbackAppender">
      <server>localhost:9000</server>
      <project>ZEST</project>
+     <pseudo>sre</pseudo>
+     <debug>true</debug>
      <layout>
        <pattern>{"date" : "%date", "level" :  "%level", "logger" : "%logger", "thread" : "%thread", "message" : "%n%message%n%xException%n"}</pattern>
      </layout>

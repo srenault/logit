@@ -9,6 +9,8 @@ import play.api.libs.json._
 
 import play.api._
 import play.api.mvc._
+import play.api.data._
+import validation.Constraints._
 
 import utils.SessionUtils
 import models.User
@@ -87,7 +89,7 @@ object Debugged extends Controller with SessionUtils {
 
   def start(pseudo: String, name: String) = Action {
     AsyncResult {
-      (DebugActor.ref ? (Listen(), 5.seconds)).mapTo[Enumerator[DebuggedLog]].asPromise.map { 
+      (DebugActor.ref ? (Listen(pseudo), 5.seconds)).mapTo[Enumerator[DebuggedLog]].asPromise.map { 
         chunks => Ok.stream(chunks &> Comet( callback = "window.parent.trace"))
       }
     }
@@ -139,15 +141,20 @@ object Debugged extends Controller with SessionUtils {
    * @param User's pseudo.
    * @param Project name.
    */
-  def eval(pseudo: String, name: String) = Action {
-    val log = DebuggedLog("NOWT!FY", "#1", JsObject(Seq.empty))
-    DebugActor.ref ! log
+  def eval(pseudo: String, name: String) = ToJsObject { json =>
+    DebugActor.ref ! NewLog(pseudo, DebuggedLog(name, "#1", json))
     Ok
   }
 
-  def sendlog() = Action {
-    val log = DebuggedLog("NOWT!FY", "#1", JsObject(Seq("thread" -> JsString("#1"))))
-    DebugActor.ref ! log
-    Ok
+  private def ToJsObject(action: JsObject => Result) = Action { implicit request =>
+    Form(of("data" -> nonEmptyText)).bindFromRequest.fold(
+      err => BadRequest("Empty json ?"), {
+        case jsonStr => Json.parse(jsonStr) match {
+          case jsObj: JsObject => action(jsObj)
+          case JsUndefined(error) => BadRequest("Invalid json: " + error)
+          case _ => BadRequest("Not a json object")
+        }
+      }
+    )
   }
 }
