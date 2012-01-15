@@ -1,29 +1,23 @@
-@(user: User)
+@(user: User, project: Project)
 
 <!--helper.javascriptRouter("jsRoutes")(
 routes.javascript.Application.say
 )-->
 
 @main("") {
-<div>
-<button>Start</button>
-<button>Stop</button>
+<div class="commands">
+<button id="start">Start</button>
+<button id="stop">Stop</button>
 </div>
 
 <fieldset>
   <legend>Arriving logs</legend>
   <ul id="logs"></ul>
-
-  <iframe src="/users/@user.pseudo/projects/db/NOWT!FY/start" style="display: none;">
-  </iframe>
+  <iframe id="stream" src="#" style="display: none;"></iframe>
 </fieldset>
 
 <script>
-  function trace(log) {
-      console.log(log);
-
-      var projectName = _.template('<%= project %>');
-      $('#logs').append('<li>'+projectName(log)+'</li>');
-  }
+  var session = new window.Session('@user.pseudo','@project.name');
+  session.bindUI();
 </script>
 }

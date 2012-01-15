@@ -13,7 +13,7 @@ import play.api.data._
 import validation.Constraints._
 
 import utils.SessionUtils
-import models.User
+import models.{User, Project}
 
 object Followed extends Controller with SessionUtils {
 
@@ -84,28 +84,16 @@ object Debugged extends Controller with SessionUtils {
       user => Ok(views.html.users.session(user)),
       Forbidden
     )*/
-    Ok(views.html.users.session(User("sre","password", "sre@zenexity.com")))
+    Ok(views.html.users.session(User("sre","password", "sre@zenexity.com"), Project("NOWT!FY")))
   }
 
   def start(pseudo: String, name: String) = Action {
     AsyncResult {
       (DebugActor.ref ? (Listen(pseudo), 5.seconds)).mapTo[Enumerator[DebuggedLog]].asPromise.map { 
-        chunks => Ok.stream(chunks &> Comet( callback = "window.parent.trace"))
+        chunks => Ok.stream(chunks &> Comet( callback = "window.parent.session.onReceive"))
       }
     }
   }
-
-  /*def start(pseudo: String, name: String) = Action { implicit request =>
-    import play.api.libs.iteratee._
-
-    val enumerator = Enumerator(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-    val enumeratee = Enumeratee.map[Int](integers => (integers * 2).toString + "; ")
-    val finalEnumerator = enumerator &> enumeratee
-
-    Ok.stream { socket: Socket.Out[String] =>
-      finalEnumerator |>> socket
-    }
-  }*/
 
   /**
    * Retrieve all projects that current user debugs.
