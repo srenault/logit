@@ -5,9 +5,10 @@
     };
 
     Session.prototype.onReceive = function(log) {
+        alert("log received !");
         var projectName = _.template('<%= project %>');
-        var messsage = _.template('<%= message %>');
-        $('#logs').append('<li>'+ message(log) +'</li>');
+        var messsage = _.template('<%= data.message %>');
+        $('#logs').append('<li>'+ log.data.message +'</li>');
     };
 
     Session.prototype.bindUI = function() {
@@ -15,13 +16,13 @@
         var buttons = {
             $start: $('div.commands #start'),
             $stop: $('div.commands #stop')
-        }
+        };
 
         var $results = $('#stream');
-
+        var _this = this;
         buttons.$start.click(function(e) {
             e.preventDefault();
-            var url = '/users/{pseudo}/projects/db/{project}/start'.replace('{pseudo}', this.pseudo).replace('{project}', this.project);
+            var url = '/users/{pseudo}/projects/db/{project}/start'.replace('{pseudo}', _this.pseudo).replace('{project}', _this.project);
             $results.attr('src', url);
         });
         

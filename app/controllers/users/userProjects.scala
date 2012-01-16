@@ -84,7 +84,7 @@ object Debugged extends Controller with SessionUtils {
       user => Ok(views.html.users.session(user)),
       Forbidden
     )*/
-    Ok(views.html.users.session(User("sre","password", "sre@zenexity.com"), Project("NOWT!FY")))
+    Ok(views.html.users.session(User("sre","password", "sre@zenexity.com"), Project("ZEST")))
   }
 
   def start(pseudo: String, name: String) = Action {
@@ -124,6 +124,12 @@ object Debugged extends Controller with SessionUtils {
     Ok
   }
 
+  def sendlog() = Action {
+    println("heyyyyyy")
+    Logger.error("dfsdfdf")
+    Ok
+  }
+
   /**
    * Add log for evaluation.
    * @param User's pseudo.
@@ -135,12 +141,13 @@ object Debugged extends Controller with SessionUtils {
   }
 
   private def ToJsObject(action: JsObject => Result) = Action { implicit request =>
+    Logger.info("entering")
     Form(of("data" -> nonEmptyText)).bindFromRequest.fold(
       err => BadRequest("Empty json ?"), {
         case jsonStr => Json.parse(jsonStr) match {
           case jsObj: JsObject => action(jsObj)
-          case JsUndefined(error) => BadRequest("Invalid json: " + error)
-          case _ => BadRequest("Not a json object")
+          case JsUndefined(error) => Logger.info("BadRequest"); BadRequest("Invalid json: " + error)
+          case _ => Logger.info("BadRequest"); BadRequest("Not a json object")
         }
       }
     )

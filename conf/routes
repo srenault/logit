@@ -19,6 +19,9 @@ GET     /dashboard                                        controllers.users.User
 POST    /users/:pseudo/follow/:name                       controllers.users.Users.follow(pseudo, name)
 POST    /users/:pseudo/debug/:name                        controllers.users.Users.debug(pseudo, name)
 
+POST    /sendlog                                          controllers.users.projects.Debugged.sendlog()
+
+
 GET     /users/:pseudo/projects/fw                        controllers.users.projects.Followed.index(pseudo)
 GET     /api/users/:pseudo/projects/fw/all                controllers.users.projects.Followed.list(pseudo)
 GET     /api/users/:pseudo/projects/fw/:name              controllers.users.projects.Followed.view(pseudo, name)
